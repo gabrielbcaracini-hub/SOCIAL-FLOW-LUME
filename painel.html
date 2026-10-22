@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Painel · SocialFlow Auto</title>
+  <link rel="icon" href="/assets/marca.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="/css/socialflow.css">
+</head>
+<body data-pagina="painel">
+  <a class="pular" href="#conteudo">Ir para o conteúdo</a>
+  <main id="tela-entrada" class="miolo entrada">
+    <a class="marca" href="/">
+      <img src="/assets/marca.jpg" width="40" height="40" alt="SocialFlow Auto">
+      <span><strong>SocialFlow Auto</strong><span>Lume Veículos</span></span>
+    </a>
+    <h1>Entrar no painel</h1>
+    <p class="lede">Área da equipe da loja. Visitante não vê estes dados.</p>
+    <p class="aviso-demo">Ambiente local. As senhas iniciais estão no README e valem só para esta demonstração.</p>
+    <form id="form-entrada" class="formulario card">
+      <label class="campo" for="email">E-mail<input id="email" name="email" type="email" autocomplete="username" required></label>
+      <label class="campo" for="senha">Senha<input id="senha" name="senha" type="password" autocomplete="current-password" required></label>
+      <button type="submit">Entrar</button>
+      <p><a href="/">Voltar à vitrine</a></p>
+    </form>
+  </main>
+  <div id="aplicacao" class="aplicacao" hidden>
+    <aside class="barra">
+      <a class="marca" href="/">
+        <img src="/assets/marca.jpg" width="44" height="44" alt="SocialFlow Auto">
+        <span><strong>SocialFlow Auto</strong></span>
+      </a>
+      <nav class="menu" aria-label="Painel">
+        <button type="button" data-abre="indicadores">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 13h4v7H4zM10 4h4v16h-4zM16 9h4v11h-4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          Indicadores
+        </button>
+        <button type="button" data-abre="veiculos">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 14.5h16l-1.1-4A2 2 0 0 0 17 9H7a2 2 0 0 0-1.9 1.5l-1.1 4z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.8" r="1.3" fill="currentColor"/><circle cx="16.5" cy="16.8" r="1.3" fill="currentColor"/></svg>
+          Veículos
+        </button>
+        <button type="button" data-abre="leads">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="9" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 17.2c.5-2.4 2.2-3.6 4.2-3.6s3.7 1.2 4.2 3.6M16.2 8.4a2 2 0 1 1 0 0zM19.4 16.6c-.3-1.7-1.4-2.6-2.9-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Leads
+        </button>
+        <button type="button" data-abre="agenda">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="4.5" y="5.5" width="15" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4v3M16 4v3M4.5 10h15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Visitas
+        </button>
+        <button type="button" id="abre-config" data-abre="config">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4.5v2.2M12 17.3V19.5M4.5 12h2.2M17.3 12H19.5M6.4 6.4l1.6 1.6M16 16l1.6 1.6M17.6 6.4 16 8M8 16l-1.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Configurações
+        </button>
+      </nav>
+      <div class="barra-usuario" id="quem">
+        <span class="barra-iniciais" id="quem-iniciais"></span>
+        <span>
+          <strong id="quem-nome"></strong>
+          <small id="quem-papel"></small>
+        </span>
+      </div>
+      <div class="rodape-barra">
+        <button type="button" id="sair" class="barra-acao">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M10 7V5.6A1.6 1.6 0 0 1 11.6 4H18a1.6 1.6 0 0 1 1.6 1.6v12.8A1.6 1.6 0 0 1 18 20h-6.4A1.6 1.6 0 0 1 10 18.4V17M4 12h10M11 8.5 14.5 12 11 15.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sair
+        </button>
+        <button type="button" id="restaurar" class="barra-acao">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7.5A6.5 6.5 0 1 1 5.6 12M7 4.8v3.4H3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Restaurar demonstração
+        </button>
+      </div>
+    </aside>
+    <div class="conteudo-painel">
+      <main id="conteudo">
+        <section id="secao-indicadores" class="secao secao-indicadores" data-secao-painel>
+          <header class="painel-topo">
+            <div>
+              <h1>Indicadores</h1>
+              <p>Visão geral dos resultados da sua loja automotiva</p>
+            </div>
+            <div class="painel-acoes">
+              <label class="somente-leitor" for="periodo-indicadores">Período</label>
+              <select id="periodo-indicadores">
+                <option value="7">Últimos 7 dias</option>
+                <option value="30" selected>Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+              </select>
+              <button type="button" id="ir-cadastrar-veiculo" class="principal">+ Cadastrar veículo</button>
+            </div>
+          </header>
+          <div id="indicadores" aria-live="polite"></div>
+        </section>
+        <section id="secao-veiculos" class="secao" data-secao-painel hidden>
+          <header class="painel-topo">
+            <div>
+              <h1>Veículos</h1>
+              <p id="texto-veiculos">Estoque desta loja, inclusive vendidos.</p>
+            </div>
+            <div class="painel-acoes">
+              <label class="campo-filtro" for="filtro-veiculo-status">Status
+                <select id="filtro-veiculo-status">
+                  <option value="">Todos</option>
+                  <option value="disponivel">Disponíveis</option>
+                  <option value="reservado">Reservados</option>
+                  <option value="vendido">Vendidos</option>
+                  <option value="indisponivel">Em análise</option>
+                </select>
+              </label>
+            </div>
+          </header>
+          <div class="rolagem">
+            <table id="tabela-veiculos">
+              <caption>Estoque desta loja, inclusive vendidos.</caption>
+              <thead><tr><th>Código</th><th>Veículo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <form id="form-veiculo" class="formulario card">
+            <h2>Cadastrar ou editar</h2>
+            <input name="id" type="hidden">
+            <div class="grade-campos">
+              <label class="campo">Código<input name="codigo" required placeholder="EST-2001"></label>
+              <label class="campo">Marca<input name="marca" required></label>
+              <label class="campo">Modelo<input name="modelo" required></label>
+              <label class="campo">Versão<input name="versao" required></label>
+              <label class="campo">Ano de fabricação<input name="ano_fabricacao" inputmode="numeric" required></label>
+              <label class="campo">Ano do modelo<input name="ano_modelo" inputmode="numeric" required></label>
+              <label class="campo">Quilometragem<input name="km" inputmode="numeric" required></label>
+              <label class="campo">Preço<input name="preco_reais" required placeholder="95000,00"></label>
+              <label class="campo">Cor<input name="cor" required></label>
+              <label class="campo">Câmbio
+                <select name="cambio"><option value="manual">Manual</option><option value="automatico">Automático</option><option value="cvt">CVT</option><option value="automatizado">Automatizado</option></select>
+              </label>
+              <label class="campo">Combustível
+                <select name="combustivel"><option value="flex">Flex</option><option value="gasolina">Gasolina</option><option value="etanol">Etanol</option><option value="diesel">Diesel</option><option value="hibrido">Híbrido</option><option value="eletrico">Elétrico</option></select>
+              </label>
+              <label class="campo">Tipo
+                <select name="tipo"><option value="hatch">Hatch</option><option value="sedan">Sedã</option><option value="suv">SUV</option><option value="pickup">Picape</option><option value="minivan">Minivan</option><option value="esportivo">Esportivo</option></select>
+              </label>
+              <label class="campo">Status
+                <select name="status"><option value="disponivel">Disponível</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option><option value="indisponivel">Indisponível</option></select>
+              </label>
+              <label class="campo">Imagem PNG, JPEG ou WebP<input name="imagem" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            </div>
+            <label class="campo">Descrição<textarea name="descricao" required></textarea></label>
+            <div class="acoes">
+              <button type="submit">Gravar veículo</button>
+              <button type="button" id="novo-veiculo" class="secundario">Limpar formulário</button>
+            </div>
+          </form>
+        </section>
+        <section id="secao-leads" class="secao" data-secao-painel hidden>
+          <header class="painel-topo">
+            <div>
+              <h1>Leads</h1>
+              <p id="texto-leads">O contato traz nome, telefone, e-mail, mensagem, carro e o consultor escolhido. Vendas vê os direcionados a si. A administração vê todos.</p>
+            </div>
+            <div class="painel-acoes">
+              <label class="campo-filtro" for="filtro-lead-status">Status
+                <select id="filtro-lead-status">
+                  <option value="">Todos</option>
+                  <option value="novo">Novos</option>
+                  <option value="contatado">Contatados</option>
+                  <option value="negociacao">Em atendimento</option>
+                  <option value="ganho">Ganhos</option>
+                  <option value="perdido">Perdidos</option>
+                </select>
+              </label>
+            </div>
+          </header>
+          <div class="rolagem">
+            <table id="tabela-leads">
+              <caption>Interesses e contatos com consentimento.</caption>
+              <thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Mensagem</th><th>Carro</th><th>Consultor</th><th>Origem</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+        <section id="secao-agenda" class="secao" data-secao-painel hidden>
+          <header class="painel-topo">
+            <div>
+              <h1>Visitas</h1>
+              <p>Confirmar e reagendar recusam horário já ocupado pelo mesmo veículo. O pedido do visitante não confirma sozinho.</p>
+            </div>
+          </header>
+          <div id="lista-agenda" class="secao"></div>
+        </section>
+        <section id="secao-config" class="secao" data-secao-painel hidden>
+          <header class="painel-topo">
+            <div>
+              <h1>Configurações</h1>
+              <p>Nome, expediente, cor e textos da loja.</p>
+            </div>
+          </header>
+          <form id="form-config" class="formulario card">
+            <label class="campo">Nome da loja<input name="nome" required></label>
+            <label class="campo">Descrição<textarea name="descricao" required></textarea></label>
+            <div class="grade-campos">
+              <label class="campo">Telefone<input name="telefone" required></label>
+              <label class="campo">E-mail<input name="email" type="email" required></label>
+              <label class="campo">Endereço demonstrativo<input name="endereco" required></label>
+              <label class="campo">Cor de destaque<input name="cor" required placeholder="#d09850"></label>
+              <label class="campo">Sugestões do consultor (1 a 3)<input name="max_sugestoes" inputmode="numeric" required></label>
+            </div>
+            <fieldset>
+              <legend>Expediente</legend>
+              <div class="grade-campos">
+                <label class="campo">Segunda abre<input name="seg_abre" type="time"></label>
+                <label class="campo">Segunda fecha<input name="seg_fecha" type="time"></label>
+                <label class="campo">Terça abre<input name="ter_abre" type="time"></label>
+                <label class="campo">Terça fecha<input name="ter_fecha" type="time"></label>
+                <label class="campo">Quarta abre<input name="qua_abre" type="time"></label>
+                <label class="campo">Quarta fecha<input name="qua_fecha" type="time"></label>
+                <label class="campo">Quinta abre<input name="qui_abre" type="time"></label>
+                <label class="campo">Quinta fecha<input name="qui_fecha" type="time"></label>
+                <label class="campo">Sexta abre<input name="sex_abre" type="time"></label>
+                <label class="campo">Sexta fecha<input name="sex_fecha" type="time"></label>
+                <label class="campo">Sábado abre<input name="sab_abre" type="time"></label>
+                <label class="campo">Sábado fecha<input name="sab_fecha" type="time"></label>
+                <label class="campo">Domingo abre<input name="dom_abre" type="time"></label>
+                <label class="campo">Domingo fecha<input name="dom_fecha" type="time"></label>
+              </div>
+            </fieldset>
+            <div id="servicos-config" class="secao"></div>
+            <label class="campo">Nota de privacidade<textarea name="privacidade" required></textarea></label>
+            <button type="submit">Salvar configurações</button>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+  <dialog id="confirma">
+    <form method="dialog">
+      <h2 id="confirma-titulo">Confirmar</h2>
+      <p id="confirma-texto"></p>
+      <div class="acoes">
+        <button value="nao" class="secundario">Cancelar</button>
+        <button value="sim">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="aviso" class="aviso" role="status"></div>
+  <script src="/js/util.js"></script>
+  <script src="/js/painel.js"></script>
+</body>
+</html>

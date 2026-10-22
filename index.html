@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lume Veículos · SocialFlow Auto</title>
+  <meta name="description" content="Vitrine, consultoria de escolha e agendamento de visita da Lume Veículos, loja fictícia no SocialFlow Auto.">
+  <link rel="icon" href="/assets/marca.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="/css/socialflow.css">
+</head>
+<body data-pagina="vitrine">
+  <a class="pular" href="#conteudo">Ir para o conteúdo</a>
+  <header class="topo">
+    <a class="marca" href="/">
+      <img src="/assets/marca.jpg" width="40" height="40" alt="SocialFlow Auto">
+      <span><strong>SocialFlow Auto</strong><span data-loja="nome">Lume Veículos</span></span>
+    </a>
+    <nav class="nav-topo" aria-label="Principal">
+      <a href="/" data-nav="vitrine">Vitrine</a>
+      <a href="#consulta" data-nav="consulta">Consultar Estoque</a>
+    </nav>
+    <form class="busca-topo" role="search">
+      <label class="somente-leitor" for="busca-topo">Buscar por veículo, marca ou modelo</label>
+      <svg class="busca-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="busca-topo" type="search" placeholder="Buscar por veículo, marca ou modelo..." autocomplete="off">
+    </form>
+    <a class="conta" href="/painel" aria-label="Entrar no painel da loja">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </a>
+  </header>
+  <section class="hero">
+    <div class="hero-texto">
+      <p class="sobretitulo">Lume Veículos</p>
+      <h1>O carro certo sai do estoque, <span class="ouro">não de um palpite.</span></h1>
+      <p class="lede">Consultoria de escolha com o que está no pátio. O pedido não reserva o carro.</p>
+      <p class="acoes">
+        <a class="botao" href="#catalogo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 14.5h16l-1.1-4A2 2 0 0 0 17 9H7a2 2 0 0 0-1.9 1.5l-1.1 4z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.8" r="1.3" fill="currentColor"/><circle cx="16.5" cy="16.8" r="1.3" fill="currentColor"/></svg>Ver veículos</a>
+        <button type="button" class="secundario" data-abre-contato><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 16.4V7.8A1.8 1.8 0 0 1 7.8 6h8.4A1.8 1.8 0 0 1 18 7.8v5.2a1.8 1.8 0 0 1-1.8 1.8H9.2L6 17.5v-1.1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Fale com um consultor</button>
+      </p>
+      <ul class="selos-hero">
+        <li>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 14h16l-1.2-4.2A2 2 0 0 0 16.9 8H7.1a2 2 0 0 0-1.9 1.8L4 14z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor"/></svg>
+          <span><strong>Veículos reais</strong><small>Estoque atualizado</small></span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.8 7.2-7 9-4.2-1.8-7-4.8-7-9V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span><strong>Loja fictícia</strong><small>Sem contatos reais</small></span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 3.5V7M16 3.5V7M4 10h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span><strong>Agendamentos</strong><small>Não são reais</small></span>
+        </li>
+      </ul>
+    </div>
+    <div class="hero-foto">
+      <img class="hero-carro" src="/assets/hero-renault.jpg" width="1024" height="384" tabindex="0" alt="Foto ilustrativa: Renault escuro acelerando para frente, com o farol aceso. Não é um veículo do estoque.">
+      <div class="hero-velocidade" aria-hidden="true"></div>
+    </div>
+  </section>
+  <main id="conteudo" class="miolo">
+    <div class="layout-vitrine">
+      <section id="catalogo" aria-labelledby="titulo-catalogo">
+        <div class="secao-topo">
+          <div>
+            <h2 id="titulo-catalogo">Veículos na vitrine</h2>
+            <p id="nota-filtros" class="meta" hidden>Filtros deste navegador foram restaurados. Eles ficam só neste aparelho.</p>
+          </div>
+          <p id="contador-vitrine" class="contador" aria-live="polite">Encontrados 0 veículos</p>
+        </div>
+        <form id="filtros" class="filtros" aria-label="Filtros do catálogo">
+          <div class="grade-campos">
+            <label class="campo" for="q">Busca<input id="q" name="q" type="search" placeholder="Marca, modelo ou código"></label>
+            <label class="campo" for="marca">Marca
+              <select id="marca" name="marca"><option value="">Todas</option></select>
+            </label>
+            <label class="campo" for="preco_max">Orçamento máximo (R$)<input id="preco_max" name="preco_max" inputmode="numeric" placeholder="140000"></label>
+            <label class="campo" for="ano_min">Ano mínimo<input id="ano_min" name="ano_min" inputmode="numeric" placeholder="2020"></label>
+            <label class="campo" for="km_max">Quilometragem máxima<input id="km_max" name="km_max" inputmode="numeric" placeholder="50000"></label>
+            <label class="campo" for="cambio">Câmbio
+              <select id="cambio" name="cambio">
+                <option value="">Todos</option>
+                <option value="manual">Manual</option>
+                <option value="automaticos">Automático, CVT ou automatizado</option>
+                <option value="cvt">Somente CVT</option>
+                <option value="automatico">Somente automático</option>
+              </select>
+            </label>
+            <label class="campo" for="tipo">Tipo
+              <select id="tipo" name="tipo">
+                <option value="">Todos</option>
+                <option value="hatch">Hatch</option>
+                <option value="sedan">Sedã</option>
+                <option value="suv">SUV</option>
+                <option value="pickup">Picape</option>
+                <option value="minivan">Minivan</option>
+                <option value="esportivo">Esportivo</option>
+              </select>
+            </label>
+            <label class="campo" for="combustivel">Combustível
+              <select id="combustivel" name="combustivel">
+                <option value="">Todos</option>
+                <option value="flex">Flex</option>
+                <option value="gasolina">Gasolina</option>
+                <option value="etanol">Etanol</option>
+                <option value="diesel">Diesel</option>
+                <option value="hibrido">Híbrido</option>
+                <option value="eletrico">Elétrico</option>
+              </select>
+            </label>
+            <label class="campo" for="status">Status
+              <select id="status" name="status">
+                <option value="">Disponíveis e reservados</option>
+                <option value="disponivel">Só disponíveis</option>
+                <option value="reservado">Só reservados</option>
+              </select>
+            </label>
+            <label class="campo" for="ordem">Ordenação
+              <select id="ordem" name="ordem">
+                <option value="preco_asc">Menor preço</option>
+                <option value="preco_desc">Maior preço</option>
+                <option value="ano_desc">Ano mais novo</option>
+                <option value="km_asc">Menor quilometragem</option>
+              </select>
+            </label>
+          </div>
+          <div class="acoes">
+            <button type="submit">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Aplicar filtros
+            </button>
+            <button type="button" id="limpar-filtros" class="secundario">Limpar filtros</button>
+          </div>
+        </form>
+        <p id="estado-carregando" class="carregando" role="status">Carregando estoque…</p>
+        <p id="estado-vazio" class="vazio" hidden>Nenhum veículo encontrado com esses filtros.</p>
+        <div id="lista-veiculos" class="grade-vitrine"></div>
+      </section>
+      <section id="consultor" class="consultor" aria-labelledby="titulo-consultor">
+        <h2 id="titulo-consultor">Consultor de estoque</h2>
+        <p id="modo-consultor" class="selo">Automação determinística — sem modelo generativo</p>
+        <p class="meta">Consulta o que está disponível e explica o motivo.</p>
+        <div id="consultor-log" role="log" aria-live="polite" aria-relevant="additions"></div>
+        <div id="consultor-resultado"></div>
+        <form id="form-consultor">
+          <label class="campo" for="consultor-mensagem">Mensagem
+            <textarea id="consultor-mensagem" name="mensagem" maxlength="500" placeholder="Ex.: SUV automático até 150 mil para família"></textarea>
+          </label>
+          <div class="grade-campos">
+            <label class="campo">Orçamento máximo<input name="preco_max" inputmode="numeric" placeholder="150000"></label>
+            <label class="campo">Câmbio
+              <select name="cambio"><option value="">Não informar</option><option value="manual">Manual</option><option value="automaticos">Automático (inclui CVT)</option><option value="cvt">CVT</option></select>
+            </label>
+            <label class="campo">Tipo
+              <select name="tipo"><option value="">Não informar</option><option value="hatch">Hatch</option><option value="sedan">Sedã</option><option value="suv">SUV</option><option value="pickup">Picape</option><option value="minivan">Minivan</option></select>
+            </label>
+            <label class="campo">Uso
+              <select name="uso"><option value="">Não informar</option><option value="familia">Família</option><option value="cidade">Cidade</option><option value="trabalho">Trabalho</option><option value="viagem">Viagem</option></select>
+            </label>
+            <label class="campo">Combustível
+              <select name="combustivel"><option value="">Não informar</option><option value="flex">Flex</option><option value="diesel">Diesel</option><option value="eletrico">Elétrico</option><option value="hibrido">Híbrido</option></select>
+            </label>
+          </div>
+          <div class="acoes acoes-consultor">
+            <button type="submit">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 6.5h14v8.5H8.2L5 18.2V6.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              Consultar estoque
+            </button>
+            <button type="button" id="consultor-limpar" class="secundario">Apagar conversa</button>
+          </div>
+        </form>
+        <form id="form-encaminhar" hidden>
+          <h3>Encaminhar estas preferências</h3>
+          <p>O encaminhamento leva as preferências estruturadas, não o texto livre da conversa.</p>
+          <label class="campo">Nome<input name="nome" required autocomplete="name"></label>
+          <label class="campo">Telefone<input name="telefone" autocomplete="tel" placeholder="(11) 90000-0000"></label>
+          <label class="campo">E-mail<input name="email" type="email" autocomplete="email"></label>
+          <label class="campo-check"><input name="consentimento" type="checkbox" required> <span>Autorizo o contato sobre este interesse.</span></label>
+          <button type="submit">Enviar à equipe</button>
+        </form>
+      </section>
+    </div>
+    <section class="servicos" aria-labelledby="titulo-servicos">
+      <h2 id="titulo-servicos">Serviços</h2>
+      <div id="lista-servicos" class="grade-servicos">
+        <article class="servico"><h3>Consultoria de escolha</h3><p>Comparar carroceria, câmbio, uso e orçamento com o que está no pátio.</p></article>
+        <article class="servico"><h3>Atendimento comercial</h3><p>Registrar interesse, com consentimento, para a equipe retornar.</p></article>
+        <article class="servico"><h3>Visita e test-drive</h3><p>Pedir um horário. A loja confirma depois; o pedido não reserva o carro.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer class="rodape miolo">
+    <p data-loja="horario_resumo">Segunda a sexta, 09:00 às 18:00. Sábado, 09:00 às 13:00. Domingo fechado.</p>
+    <p><span data-loja="endereco">Avenida Demonstração, 1200, Setor Comercial, Cidade Exemplo/SP</span> · <span data-loja="telefone">(11) 4000-0100</span></p>
+    <p>SocialFlow Auto · ambiente local de demonstração. A foto do alto é ilustrativa e não está à venda.</p>
+  </footer>
+  <dialog id="dialogo-contato" aria-labelledby="titulo-contato">
+    <form id="form-contato">
+      <h2 id="titulo-contato">Fale com um consultor</h2>
+      <p>A mensagem fica no painel, para o consultor que você escolher. Isso não reserva o carro nem confirma visita.</p>
+      <label class="campo" for="contato-nome">Nome
+        <input id="contato-nome" name="nome" required autocomplete="name" maxlength="80">
+      </label>
+      <label class="campo" for="contato-email">E-mail
+        <input id="contato-email" name="email" type="email" required autocomplete="email" maxlength="120">
+      </label>
+      <label class="campo" for="contato-mensagem">Mensagem
+        <textarea id="contato-mensagem" name="mensagem" required minlength="10" maxlength="800"></textarea>
+      </label>
+      <label class="campo" for="contato-veiculo">Qual carro deseja
+        <select id="contato-veiculo" name="veiculo_id">
+          <option value="">Ainda não escolhi</option>
+        </select>
+      </label>
+      <label class="campo" for="contato-consultor">Consultor
+        <select id="contato-consultor" name="consultor_id" required>
+          <option value="">Escolha quem vai atender</option>
+        </select>
+      </label>
+      <label class="campo-check">
+        <input name="consentimento" type="checkbox" required>
+        <span>Autorizo o contato sobre esta mensagem.</span>
+      </label>
+      <div class="acoes">
+        <button type="button" class="secundario" data-fecha-contato>Fechar</button>
+        <button type="submit">Enviar mensagem</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="aviso" class="aviso" role="status"></div>
+  <aside class="luna" id="luna">
+    <section class="luna-painel" id="luna-painel" hidden aria-label="Luna, assistente de I.A">
+      <div class="luna-topo">
+        <div class="luna-identidade">
+          <p class="luna-nome">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.1 13.5 8.4 19.8 10 13.5 11.6 12 17.9 10.5 11.6 4.2 10 10.5 8.4 12 2.1z"/><path fill="currentColor" d="M18.1 14.2 18.7 16.4 20.9 17 18.7 17.6 18.1 19.8 17.5 17.6 15.3 17 17.5 16.4 18.1 14.2z"/></svg>
+            Luna
+          </p>
+          <p class="luna-cargo">Assistente de I.A</p>
+        </div>
+        <img class="luna-retrato" src="/assets/luna-busto.jpg" width="438" height="735" alt="">
+        <div class="luna-janela">
+          <button type="button" data-luna-recolher aria-label="Minimizar a Luna">−</button>
+          <button type="button" data-luna-fechar aria-label="Fechar a Luna">×</button>
+        </div>
+      </div>
+      <div class="luna-rolagem">
+        <div class="luna-inicio">
+        <p class="luna-saudacao">Olá! 👋 Sou a Luna, consultora da Lume Veículos. Posso te ajudar a encontrar o carro ideal, tirar dúvidas e simular valores.</p>
+        <div class="luna-atalhos">
+          <button type="button" data-luna-acao="buscar">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span><strong>Buscar veículos</strong><small>Encontre o carro ideal para você</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="simular">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h.01M12 12h.01M16 12h.01M8 15.5h.01M12 15.5h.01M16 15.5h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span><strong>Simular valores</strong><small>Veja estimativas de pagamento</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="comparar">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 16.2l1.7-4.4h12.6L20 16.2M6.2 16.2h.01M17.6 16.2h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.2" cy="17.4" r="1.35" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.6" cy="17.4" r="1.35" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span><strong>Comparar opções</strong><small>Compare modelos lado a lado</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="detalhes">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3.8h7.2L19 8.4V20.2H7V3.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3.8V8.6h5M9.2 12.2h6.6M9.2 15.5h6.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span><strong>Ver detalhes</strong><small>Receba mais informações do veículo</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        </div>
+        <div id="luna-log" class="luna-log" role="log" aria-live="polite"></div>
+      </div>
+      <form id="luna-form">
+        <label class="somente-leitor" for="luna-mensagem">Mensagem para a Luna</label>
+        <input id="luna-mensagem" name="mensagem" maxlength="500" placeholder="Escreva sua mensagem para a Luna..." autocomplete="off">
+        <button type="submit" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+      <p class="luna-rodape">Quando você quiser fechar, a Luna te encaminha para um consultor da loja.</p>
+    </section>
+    <div class="luna-cartao">
+      <button type="button" class="luna-abrir" data-luna-abrir aria-expanded="false" aria-label="Abrir a conversa com a Luna">
+        <img src="/assets/luna-busto.jpg" width="86" height="86" alt="">
+        <span class="luna-texto">
+          <strong>Luna <span class="luna-brilho" aria-hidden="true">✦</span></strong>
+          <small><span class="luna-ponto" aria-hidden="true"></span>Posso te ajudar a encontrar o carro ideal?</small>
+        </span>
+      </button>
+      <button type="button" class="luna-recolher" data-luna-recolher aria-label="Recolher a Luna">−</button>
+    </div>
+  </aside>
+  <script src="/js/util.js"></script>
+  <script src="/js/vitrine.js"></script>
+  <script src="/js/assistente.js"></script>
+  <script src="/js/contato.js"></script>
+  <script src="/js/luna.js"></script>
+</body>
+</html>

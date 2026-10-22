@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img">
+  <title>Ilustração demonstrativa de hatch</title>
+  <rect width="640" height="360" fill="#e7e1d6"/>
+  <path d="M70 230 h150 l40-70 h150 l50 40 h150 v30 H70z" fill="#8a5a2b" opacity="0.9"/>
+  <circle cx="190" cy="240" r="28" fill="#f4f0e8" stroke="#16191f" stroke-width="6"/>
+  <circle cx="460" cy="240" r="28" fill="#f4f0e8" stroke="#16191f" stroke-width="6"/>
+  <text x="32" y="48" font-family="Segoe UI, sans-serif" font-size="22" fill="#5c3b1e">Ilustração demonstrativa</text>
+  <text x="32" y="78" font-family="Segoe UI, sans-serif" font-size="16" fill="#5e584e">Não é fotografia deste veículo</text>
+</svg>

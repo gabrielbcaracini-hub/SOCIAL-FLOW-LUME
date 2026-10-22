@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Veículo · SocialFlow Auto</title>
+  <meta name="description" content="Detalhe do veículo, interesse e pedido de visita na Lume Veículos.">
+  <link rel="icon" href="/assets/marca.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="/css/socialflow.css">
+</head>
+<body data-pagina="veiculo">
+  <a class="pular" href="#conteudo">Ir para o conteúdo</a>
+  <header class="topo">
+    <a class="marca" href="/">
+      <img src="/assets/marca.jpg" width="40" height="40" alt="SocialFlow Auto">
+      <span><strong>SocialFlow Auto</strong><span data-loja="nome">Lume Veículos</span></span>
+    </a>
+    <nav class="nav-topo" aria-label="Principal">
+      <a href="/" data-nav="vitrine">Vitrine</a>
+      <a href="#consultor">Consultar Estoque</a>
+    </nav>
+    <form class="busca-topo" role="search" action="/" method="get">
+      <label class="somente-leitor" for="busca-topo">Buscar por veículo, marca ou modelo</label>
+      <svg class="busca-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="busca-topo" name="q" type="search" placeholder="Buscar por veículo, marca ou modelo..." autocomplete="off">
+    </form>
+    <a class="conta" href="/painel" aria-label="Entrar no painel da loja">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </a>
+  </header>
+  <main id="conteudo" class="miolo">
+    <p class="nota-demo" data-loja="aviso_demonstracao">Loja fictícia. Veículos, contatos e agendamentos não são reais.</p>
+    <article class="layout-vitrine">
+      <div>
+        <p class="sobretitulo">Estoque</p>
+        <h1 id="titulo-veiculo">Carregando veículo…</h1>
+        <p id="preco-veiculo" class="preco"></p>
+        <p id="status-veiculo" class="selo"></p>
+        <div id="galeria" class="galeria"></div>
+        <p id="descricao-veiculo" class="lede"></p>
+        <dl id="ficha"></dl>
+        <div class="acoes">
+          <button type="button" data-abre-contato data-veiculo="atual">Fale com um consultor</button>
+          <button type="button" id="perguntar" class="secundario">Consultar o estoque</button>
+          <button type="button" id="abrir-interesse" class="secundario">Tenho interesse</button>
+          <button type="button" id="abrir-visita" class="secundario">Solicitar visita ou test-drive</button>
+        </div>
+        <p id="aviso-visita" class="meta"></p>
+      </div>
+      <section id="consultor" class="card consultor" aria-labelledby="titulo-consultor">
+        <h2 id="titulo-consultor">Consultor deste veículo</h2>
+        <p id="modo-consultor" class="selo">Automação determinística — sem modelo generativo</p>
+        <div id="consultor-log" role="log" aria-live="polite"></div>
+        <div id="consultor-resultado"></div>
+        <form id="form-consultor">
+          <label class="campo" for="consultor-mensagem">Mensagem
+            <textarea id="consultor-mensagem" name="mensagem" maxlength="500"></textarea>
+          </label>
+          <input type="hidden" name="preco_max" value="">
+          <div class="grade-campos">
+            <label class="campo">Câmbio
+              <select name="cambio"><option value="">Não informar</option><option value="manual">Manual</option><option value="automaticos">Automático (inclui CVT)</option></select>
+            </label>
+            <label class="campo">Uso
+              <select name="uso"><option value="">Não informar</option><option value="familia">Família</option><option value="cidade">Cidade</option><option value="trabalho">Trabalho</option><option value="viagem">Viagem</option></select>
+            </label>
+          </div>
+          <div class="acoes">
+            <button type="submit">Consultar estoque</button>
+            <button type="button" id="consultor-limpar" class="secundario">Apagar conversa</button>
+          </div>
+        </form>
+        <form id="form-encaminhar" hidden>
+          <h3>Falar com um vendedor</h3>
+          <label class="campo">Nome<input name="nome" required></label>
+          <label class="campo">Telefone<input name="telefone"></label>
+          <label class="campo">E-mail<input name="email" type="email"></label>
+          <label class="campo-check"><input name="consentimento" type="checkbox" required> <span>Autorizo o contato sobre este interesse.</span></label>
+          <button type="submit">Enviar à equipe</button>
+        </form>
+      </section>
+    </article>
+  </main>
+  <dialog id="dialogo-interesse" aria-labelledby="titulo-interesse">
+    <form id="form-interesse">
+      <h2 id="titulo-interesse">Tenho interesse</h2>
+      <p>A equipe vê o pedido no painel. Isso não reserva o veículo.</p>
+      <label class="campo" for="interesse-nome">Nome
+        <input id="interesse-nome" name="nome" required autocomplete="name" maxlength="80">
+      </label>
+      <label class="campo" for="interesse-telefone">Telefone
+        <input id="interesse-telefone" name="telefone" autocomplete="tel" maxlength="20">
+      </label>
+      <label class="campo" for="interesse-email">E-mail
+        <input id="interesse-email" name="email" type="email" autocomplete="email" maxlength="120">
+      </label>
+      <label class="campo" for="interesse-veiculo">Carro
+        <select id="interesse-veiculo" name="veiculo_id" required></select>
+      </label>
+      <label class="campo" for="interesse-consultor">Consultor
+        <select id="interesse-consultor" name="consultor_id" required>
+          <option value="">Escolha quem vai atender</option>
+        </select>
+      </label>
+      <label class="campo-check">
+        <input name="consentimento" type="checkbox" required>
+        <span>Autorizo o contato sobre este veículo.</span>
+      </label>
+      <div class="acoes">
+        <button type="button" class="secundario" id="fechar-interesse">Fechar</button>
+        <button type="submit">Enviar interesse</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="dialogo-visita">
+    <form id="form-visita">
+      <h2>Solicitar visita ou test-drive</h2>
+      <p>O horário fica como pedido. A loja confirma, reagenda ou cancela.</p>
+      <input id="visita-veiculo" name="veiculo_id" type="hidden">
+      <label class="campo">Tipo
+        <select name="tipo"><option value="visita">Visita à loja</option><option value="test_drive">Test-drive</option></select>
+      </label>
+      <label class="campo">Horário<input name="inicio" type="datetime-local" required step="3600"></label>
+      <label class="campo">Nome<input name="nome" required></label>
+      <label class="campo">Telefone<input name="telefone"></label>
+      <label class="campo">E-mail<input name="email" type="email"></label>
+      <label class="campo-check"><input name="consentimento" type="checkbox" required> <span>Autorizo o contato para tratar desta visita.</span></label>
+      <div class="acoes">
+        <button type="button" class="secundario" id="fechar-visita">Fechar</button>
+        <button type="submit">Enviar pedido</button>
+      </div>
+    </form>
+  </dialog>
+  <footer class="rodape miolo"><p><a href="/">Voltar à vitrine</a></p></footer>
+  <dialog id="dialogo-contato" aria-labelledby="titulo-contato">
+    <form id="form-contato">
+      <h2 id="titulo-contato">Fale com um consultor</h2>
+      <p>A mensagem fica no painel, para o consultor que você escolher. Isso não reserva o carro nem confirma visita.</p>
+      <label class="campo" for="contato-nome">Nome
+        <input id="contato-nome" name="nome" required autocomplete="name" maxlength="80">
+      </label>
+      <label class="campo" for="contato-email">E-mail
+        <input id="contato-email" name="email" type="email" required autocomplete="email" maxlength="120">
+      </label>
+      <label class="campo" for="contato-mensagem">Mensagem
+        <textarea id="contato-mensagem" name="mensagem" required minlength="10" maxlength="800"></textarea>
+      </label>
+      <label class="campo" for="contato-veiculo">Qual carro deseja
+        <select id="contato-veiculo" name="veiculo_id">
+          <option value="">Ainda não escolhi</option>
+        </select>
+      </label>
+      <label class="campo" for="contato-consultor">Consultor
+        <select id="contato-consultor" name="consultor_id" required>
+          <option value="">Escolha quem vai atender</option>
+        </select>
+      </label>
+      <label class="campo-check">
+        <input name="consentimento" type="checkbox" required>
+        <span>Autorizo o contato sobre esta mensagem.</span>
+      </label>
+      <div class="acoes">
+        <button type="button" class="secundario" data-fecha-contato>Fechar</button>
+        <button type="submit">Enviar mensagem</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="aviso" class="aviso" role="status"></div>
+  <aside class="luna" id="luna">
+    <section class="luna-painel" id="luna-painel" hidden aria-label="Luna, assistente de I.A">
+      <div class="luna-topo">
+        <div class="luna-identidade">
+          <p class="luna-nome">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.1 13.5 8.4 19.8 10 13.5 11.6 12 17.9 10.5 11.6 4.2 10 10.5 8.4 12 2.1z"/><path fill="currentColor" d="M18.1 14.2 18.7 16.4 20.9 17 18.7 17.6 18.1 19.8 17.5 17.6 15.3 17 17.5 16.4 18.1 14.2z"/></svg>
+            Luna
+          </p>
+          <p class="luna-cargo">Assistente de I.A</p>
+        </div>
+        <img class="luna-retrato" src="/assets/luna-busto.jpg" width="438" height="735" alt="">
+        <div class="luna-janela">
+          <button type="button" data-luna-recolher aria-label="Minimizar a Luna">−</button>
+          <button type="button" data-luna-fechar aria-label="Fechar a Luna">×</button>
+        </div>
+      </div>
+      <div class="luna-rolagem">
+        <div class="luna-inicio">
+        <p class="luna-saudacao">Olá! 👋 Sou a Luna, consultora da Lume Veículos. Posso te ajudar a encontrar o carro ideal, tirar dúvidas e simular valores.</p>
+        <div class="luna-atalhos">
+          <button type="button" data-luna-acao="buscar">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span><strong>Buscar veículos</strong><small>Encontre o carro ideal para você</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="simular">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h.01M12 12h.01M16 12h.01M8 15.5h.01M12 15.5h.01M16 15.5h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span><strong>Simular valores</strong><small>Veja estimativas de pagamento</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="comparar">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 16.2l1.7-4.4h12.6L20 16.2M6.2 16.2h.01M17.6 16.2h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.2" cy="17.4" r="1.35" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="16.6" cy="17.4" r="1.35" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span><strong>Comparar opções</strong><small>Compare modelos lado a lado</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" data-luna-acao="detalhes">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 3.8h7.2L19 8.4V20.2H7V3.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3.8V8.6h5M9.2 12.2h6.6M9.2 15.5h6.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span><strong>Ver detalhes</strong><small>Receba mais informações do veículo</small></span>
+            <svg class="luna-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        </div>
+        <div id="luna-log" class="luna-log" role="log" aria-live="polite"></div>
+      </div>
+      <form id="luna-form">
+        <label class="somente-leitor" for="luna-mensagem">Mensagem para a Luna</label>
+        <input id="luna-mensagem" name="mensagem" maxlength="500" placeholder="Escreva sua mensagem para a Luna..." autocomplete="off">
+        <button type="submit" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+      <p class="luna-rodape">Quando você quiser fechar, a Luna te encaminha para um consultor da loja.</p>
+    </section>
+    <div class="luna-cartao">
+      <button type="button" class="luna-abrir" data-luna-abrir aria-expanded="false" aria-label="Abrir a conversa com a Luna">
+        <img src="/assets/luna-busto.jpg" width="86" height="86" alt="">
+        <span class="luna-texto">
+          <strong>Luna <span class="luna-brilho" aria-hidden="true">✦</span></strong>
+          <small><span class="luna-ponto" aria-hidden="true"></span>Posso te ajudar a encontrar o carro ideal?</small>
+        </span>
+      </button>
+      <button type="button" class="luna-recolher" data-luna-recolher aria-label="Recolher a Luna">−</button>
+    </div>
+  </aside>
+  <script src="/js/util.js"></script>
+  <script src="/js/detalhe.js"></script>
+  <script src="/js/assistente.js"></script>
+  <script src="/js/contato.js"></script>
+  <script src="/js/luna.js"></script>
+</body>
+</html>

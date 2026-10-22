@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
+data/uploads/*
+!data/uploads/.gitkeep
+_pdf_extract.txt
