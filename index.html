@@ -53,7 +53,9 @@
       </ul>
     </div>
     <div class="hero-foto">
-      <img class="hero-carro" src="/assets/hero-renault.jpg" width="1024" height="384" tabindex="0" alt="Foto ilustrativa: Renault escuro acelerando para frente, com o farol aceso. Não é um veículo do estoque.">
+      <video class="hero-carro" width="1024" height="384" muted playsinline preload="auto" disablepictureinpicture tabindex="0" aria-label="Vídeo ilustrativo: Renault escuro acelerando para frente, com o farol aceso. Não é um veículo do estoque.">
+        <source src="/assets/hero-renault.mp4" type="video/mp4">
+      </video>
       <div class="hero-velocidade" aria-hidden="true"></div>
     </div>
   </section>
@@ -191,7 +193,7 @@
   <footer class="rodape miolo">
     <p data-loja="horario_resumo">Segunda a sexta, 09:00 às 18:00. Sábado, 09:00 às 13:00. Domingo fechado.</p>
     <p><span data-loja="endereco">Avenida Demonstração, 1200, Setor Comercial, Cidade Exemplo/SP</span> · <span data-loja="telefone">(11) 4000-0100</span></p>
-    <p>SocialFlow Auto · ambiente local de demonstração. A foto do alto é ilustrativa e não está à venda.</p>
+    <p>SocialFlow Auto · demonstração acadêmica. A foto do alto é ilustrativa e não está à venda. <a href="/privacidade">Privacidade</a></p>
   </footer>
   <dialog id="dialogo-contato" aria-labelledby="titulo-contato">
     <form id="form-contato">
@@ -293,6 +295,7 @@
   </aside>
   <script src="/js/util.js"></script>
   <script src="/js/vitrine.js"></script>
+  <script src="/js/hero-scroll.js"></script>
   <script src="/js/assistente.js"></script>
   <script src="/js/contato.js"></script>
   <script src="/js/luna.js"></script>

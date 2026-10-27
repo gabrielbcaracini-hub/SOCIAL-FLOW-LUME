@@ -71,6 +71,10 @@
     const palco = document.querySelector(".hero-foto");
     const carro = palco ? palco.querySelector(".hero-carro") : null;
     if (!palco || !carro) return;
+    if (carro.tagName === "VIDEO") {
+      palco.classList.add("assentou");
+      return;
+    }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       palco.classList.add("assentou");
       return;

@@ -69,6 +69,10 @@
     const admin = usuario.papel === "admin";
     config.hidden = !admin;
     restaurar.hidden = !admin;
+    const formVeiculo = document.getElementById("form-veiculo");
+    const irCadastro = document.getElementById("ir-cadastrar-veiculo");
+    if (formVeiculo) formVeiculo.hidden = !admin;
+    if (irCadastro) irCadastro.hidden = !admin;
     mostrar("indicadores");
   }
 
@@ -347,9 +351,13 @@
     vender.className = "secundario";
     vender.textContent = "Marcar vendido";
     vender.addEventListener("click", function () { mudarStatus(veiculo, "vendido"); });
-    acoes.appendChild(editar);
-    acoes.appendChild(document.createTextNode(" "));
-    acoes.appendChild(vender);
+    if (papel === "admin") {
+      acoes.appendChild(editar);
+      acoes.appendChild(document.createTextNode(" "));
+      acoes.appendChild(vender);
+    } else {
+      acoes.textContent = "Somente leitura";
+    }
     tr.appendChild(acoes);
     return tr;
   }

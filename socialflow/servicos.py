@@ -1,7 +1,6 @@
 """Casos de uso. A organização da sessão ou a loja pública limitam toda consulta."""
 
 import json
-import sqlite3
 import uuid
 from contextlib import contextmanager
 from datetime import timedelta
@@ -25,7 +24,7 @@ from socialflow.tempo import agora, iso, parse_inicio
 
 @contextmanager
 def _conexao(pedido):
-    conn = banco.conectar(pedido.config.db_path)
+    conn = banco.conectar(pedido.config)
     try:
         yield conn
     finally:
@@ -117,7 +116,7 @@ def _exigir_usuario(conn, pedido):
 
 def _exigir_admin(usuario):
     if usuario["role"] != "admin":
-        raise ErroHttp(403, "Somente a administração da loja pode alterar as configurações.")
+        raise ErroHttp(403, "Somente a administração da loja pode fazer esta alteração.")
     return usuario
 
 
@@ -227,7 +226,7 @@ def entrar(pedido, corpo):
                 "papel": usuario["role"],
                 "papel_rotulo": rotulo("papel", usuario["role"]),
             },
-        }, [seguranca.cookie("sf_sessao", sessao, 12 * 3600)]
+        }, [seguranca.cookie("sf_sessao", sessao, 12 * 3600, seguro=pedido.config.cookie_seguro)]
 
 
 def sair(pedido):
@@ -236,7 +235,7 @@ def sair(pedido):
         sessao = pedido.cookies.get("sf_sessao")
         if sessao:
             conn.execute("DELETE FROM auth_sessions WHERE id = ?", (sessao,))
-        return {"ok": True}, [seguranca.cookie("sf_sessao", "", 0)]
+        return {"ok": True}, [seguranca.cookie("sf_sessao", "", 0, seguro=pedido.config.cookie_seguro)]
 
 
 def veiculos_publicos(pedido):
@@ -669,7 +668,7 @@ def luna_assistente(pedido, corpo):
                 resultado = luna.orquestrar(
                     mensagem, veiculos, prefs, org, config, intencao=intencao, limite=limite,
                 )
-            except sqlite3.Error:
+            except banco.ErroBanco:
                 raise ErroHttp(503, "Não consegui consultar o estoque agora. Tente de novo em instantes.")
             por_id = {v["id"]: v for v in veiculos}
             sugestoes = _cards_validos(conn, resultado.get("sugestoes") or [], por_id)
@@ -966,6 +965,12 @@ def listar_veiculos_admin(pedido):
 def _salvar_imagem(pedido, conn, org_id, veiculo_id, conteudo_b64):
     if not conteudo_b64:
         return
+    if pedido.config.uploads_efemeros:
+        raise ErroHttp(
+            400,
+            "Nesta publicação o disco não guarda foto. Use o estoque já cadastrado ou grave o veículo no ambiente local.",
+            {"imagem": "Upload indisponível neste ambiente."},
+        )
     bruto, extensao = seguranca.decodificar_imagem(conteudo_b64)
     nome = f"{_id()}.{extensao}"
     pasta = pedido.config.uploads.resolve()
@@ -1006,7 +1011,7 @@ def _inserir_placeholder(conn, org_id, veiculo_id, tipo):
 def criar_veiculo(pedido, corpo):
     with _conexao(pedido) as conn:
         _exigir_csrf(conn, pedido)
-        usuario = _exigir_usuario(conn, pedido)
+        usuario = _exigir_admin(_exigir_usuario(conn, pedido))
         dados = validacao.payload_veiculo(corpo)
         try:
             with _transacao(conn):
@@ -1031,7 +1036,7 @@ def criar_veiculo(pedido, corpo):
                 _inserir_placeholder(conn, usuario["organization_id"], vid, dados["body_type"])
                 _salvar_imagem(pedido, conn, usuario["organization_id"], vid, imagem)
                 _auditar(conn, usuario["organization_id"], usuario["id"], "criar_veiculo", "vehicle", vid)
-        except sqlite3.IntegrityError as exc:
+        except banco.Integridade as exc:
             raise ErroHttp(409, _mensagem_integridade(exc))
         row = _veiculo_org(conn, usuario["organization_id"], vid)
         return {"veiculo": _serial_lista(conn, [dict(row)], publico=False)[0]}, []
@@ -1040,7 +1045,7 @@ def criar_veiculo(pedido, corpo):
 def atualizar_veiculo(pedido, veiculo_id, corpo):
     with _conexao(pedido) as conn:
         _exigir_csrf(conn, pedido)
-        usuario = _exigir_usuario(conn, pedido)
+        usuario = _exigir_admin(_exigir_usuario(conn, pedido))
         atual = _veiculo_org(conn, usuario["organization_id"], veiculo_id)
         dados = validacao.payload_veiculo(corpo, atual)
         if not pode_transicionar_veiculo(atual["status"], dados["status"]):
@@ -1065,7 +1070,7 @@ def atualizar_veiculo(pedido, veiculo_id, corpo):
                 )
                 _salvar_imagem(pedido, conn, usuario["organization_id"], veiculo_id, imagem)
                 _auditar(conn, usuario["organization_id"], usuario["id"], "atualizar_veiculo", "vehicle", veiculo_id)
-        except sqlite3.IntegrityError as exc:
+        except banco.Integridade as exc:
             raise ErroHttp(409, _mensagem_integridade(exc))
         row = _veiculo_org(conn, usuario["organization_id"], veiculo_id)
         return {"veiculo": _serial_lista(conn, [dict(row)], publico=False)[0]}, []
@@ -1074,7 +1079,7 @@ def atualizar_veiculo(pedido, veiculo_id, corpo):
 def excluir_veiculo(pedido, veiculo_id):
     with _conexao(pedido) as conn:
         _exigir_csrf(conn, pedido)
-        usuario = _exigir_usuario(conn, pedido)
+        usuario = _exigir_admin(_exigir_usuario(conn, pedido))
         _veiculo_org(conn, usuario["organization_id"], veiculo_id)
         ocupado = conn.execute(
             "SELECT COUNT(*) AS n FROM appointments WHERE vehicle_id = ? AND organization_id = ?",
@@ -1093,7 +1098,7 @@ def excluir_veiculo(pedido, veiculo_id):
                     (veiculo_id, usuario["organization_id"]),
                 )
                 _auditar(conn, usuario["organization_id"], usuario["id"], "excluir_veiculo", "vehicle", veiculo_id)
-        except sqlite3.IntegrityError as exc:
+        except banco.Integridade as exc:
             raise ErroHttp(409, _mensagem_integridade(exc))
         _apagar_arquivos(pedido, [row["path"] for row in uploads])
         return {"ok": True}, []

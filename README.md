@@ -1,145 +1,267 @@
-# SocialFlow Auto
+# SocialFlow Auto — Lume Veículos
 
-Atendimento que consulta o estoque de verdade.
+Plataforma web de vitrine, consultoria de escolha e painel comercial para uma revendedora **fictícia**.
 
-Plataforma local de vitrine, consultoria de escolha e gestão comercial para uma revendedora fictícia de veículos. A loja de demonstração se chama **Lume Veículos**.
+Este repositório é o trabalho da disciplina *Padrões Web para No Code e Low Code* e também o registro do projeto no meu portfólio de Desenvolvimento de Software e Automação.
 
-## Problema
+**Demonstração pública (HTTPS):** [https://lume-veiculos.vercel.app](https://lume-veiculos.vercel.app)
 
-Uma revenda pequena atendia por mensagem solta. O cliente não via o que estava disponível, o vendedor repetia preço e característica, e a visita era combinada sem horário nem registro. O SocialFlow Auto publica o estoque, responde só com carros que existem e deixa a equipe confirmar a visita.
+**Ambiente de estudo no computador:** `http://127.0.0.1:8080`
 
-A disciplina *Padrões Web para No Code e Low Code* pede uma empresa de serviços. A Lume entra nesse enquadro pelos serviços de consultoria de escolha, atendimento comercial e agendamento de visita ou test-drive, além da venda. O segmento automotivo é uma adaptação desse cenário.
+---
 
-Vídeo, roteiro e texto teórico da faculdade ficam fora deste repositório.
+## Sobre o projeto
 
-## O que dá para fazer
+O SocialFlow Auto é o sistema. A **Lume Veículos** é a loja de demonstração que vive dentro dele.
 
-1. Ver a vitrine, filtrar e ordenar.
-2. Abrir o veículo, registrar interesse ou pedir visita. O pedido nasce como **solicitado**. Não há confirmação automática.
-3. Falar com um consultor numa janela pequena, a partir do botão ou do item Consultor. A pessoa escolhe o carro e o nome de quem vai atender. A mensagem cai no painel, atribuída a esse consultor, e não confirma a visita sozinha.
-4. Conversar com o consultor de estoque. Sem chave de modelo, a resposta é automação determinística e a tela diz isso. Ela não inventa carro, preço, desconto, financiamento nem garantia.
-5. Entrar no painel, ver indicadores calculados dos registros, cadastrar veículo, mudar status, tratar lead e confirmar ou reagendar visita.
-6. Ajustar nome, textos, expediente, cor e quantidade de sugestões sem editar código.
+Na prática, o visitante vê o estoque, conversa com a assistente **Luna**, registra interesse ou pede uma visita. A equipe entra no **CRM** (`/painel`) para acompanhar leads, confirmar horários e cuidar do cadastro.
 
-Dados de pessoas são fictícios. Não há CPF, endereço residencial nem dado de saúde. As fotos da vitrine são arquivos reais em `assets/veiculos/`, com fonte e licença em `data/creditos-fotos.md`. A legenda deixa claro quando a foto é do modelo ou da geração, e não da unidade anunciada.
+Não é uma loja real. Os dados de pessoas no seed são fictícios. O objetivo é mostrar um fluxo completo — do anúncio até o atendimento — com regras no servidor, e não só uma página estática.
 
-## Como abrir
+---
 
-Requisito: Python 3.11 ou mais recente. Não há `pip install`.
+## Problema identificado
+
+Revenda pequena costuma atender por mensagem solta. O cliente não vê o que está no pátio, o vendedor repete preço de memória e a visita é combinada sem registro.
+
+Isso gera três falhas simples:
+
+- sugerir carro que já foi vendido;
+- prometer condição que não está no cadastro;
+- perder o histórico de quem pediu retorno.
+
+A disciplina pede uma pequena empresa de **serviços**. A Lume entra nesse recorte pela consultoria de escolha, pelo atendimento comercial e pelo agendamento de visita ou test-drive — além de exibir o estoque.
+
+---
+
+## Objetivo da solução
+
+- Publicar só o que está **disponível** (ou reservado, na ficha, conforme a regra da vitrine).
+- Deixar a pessoa filtrar, comparar e pedir contato **com consentimento**.
+- Fazer a Luna responder com base no estoque, não com palpite.
+- Dar à equipe um painel para indicadores, leads e visitas.
+- Permitir que a loja mude textos, expediente e cor **sem editar código**.
+
+---
+
+## Público-alvo
+
+| Quem | O que faz no sistema |
+| --- | --- |
+| Visitante | Navega na vitrine, fala com a Luna, envia interesse ou pede visita |
+| Vendas | Trata leads e agenda que lhe cabem |
+| Administração | Vê a loja inteira, cadastra estoque, configura a loja e restaura a demonstração |
+
+---
+
+## Principais funcionalidades
+
+### Vitrine
+
+- Lista de veículos com busca, filtro e ordenação.
+- Ficha do carro, interesse e pedido de visita (o pedido nasce **solicitado**; a loja confirma depois).
+- Mensagem a um consultor escolhido.
+- Consentimento obrigatório nos formulários de contato.
+- Página de privacidade em `/privacidade`.
+
+### Painel (CRM)
+
+- Tela de login própria da equipe.
+- Indicadores (leads, estoque, série do período).
+- Estoque da loja (cadastro e mudança de status **só pela administração**).
+- Leads com status e responsável.
+- Visitas: confirmar ou reagendar, sem sobrepor horário já ocupado no mesmo veículo.
+- Configuração da loja (nome, horários, cor, textos).
+
+### Luna
+
+- Balão na vitrine: busca, comparação, simulação simples de valores e encaminhamento a um consultor.
+- Sem chave de IA, ela continua no script do estoque.
+- Com Gemini no servidor, ela só **reescreve** o texto já fundamentado. Se o modelo inventar dado, a resposta é descartada.
+- O texto livre da conversa **não** é gravado no banco.
+
+---
+
+## Tecnologias e ferramentas utilizadas
+
+| Camada | O que usei | Para quê |
+| --- | --- | --- |
+| Interface | HTML, CSS e JavaScript | Telas, layout, Luna e painel |
+| Backend | Python | API, validação, sessão e regras |
+| Banco no PC | MariaDB/MySQL (XAMPP) | Dados da loja no dia a dia de desenvolvimento |
+| Testes | SQLite temporário | `python -m unittest discover -s tests -v` |
+| IA | Gemini (Google) | Redação da Luna; chave só no servidor |
+| Publicação | Vercel | HTTPS em `.vercel.app` |
+
+Não construí o site em Softr, Webflow, Framer ou Glide. Essas ferramentas pedem conta e encaixam mal estoque + sessão + papéis + IA sem expor chave no navegador.
+
+O que fica próximo de *low-code* na **operação** é o painel: a loja altera textos e expediente sem abrir o código. A Vercel entra como publicação, não como construtor visual.
+
+---
+
+## Aplicação de HTML, CSS e JavaScript
+
+Não usei essas linguagens “para cumprir lista”. Elas são a interface do produto.
+
+**HTML.** Páginas `index.html`, `veiculo.html`, `painel.html` e `privacidade.html`. Há `lang="pt-BR"`, `main`, `nav`, rótulos nos campos, `dialog` de contato, link para pular ao conteúdo e atributos `aria-*`. O login do CRM não reutiliza a grade da vitrine — isso quebrava o texto na tela estreita.
+
+**CSS.** Um arquivo `css/socialflow.css`: tema escuro, dourado da marca, unidades `rem` e `clamp`, grade, foco visível e versão em uma coluna no celular.
+
+**JavaScript.** Módulos por tela (`vitrine.js`, `luna.js`, `painel.js`, `util.js`). A vitrine consome a API. A Luna desenha a conversa com texto escapado. O painel esconde o cadastro de veículo para quem não é admin. O `localStorage` guarda só filtro e favorito da interface — estoque e lead ficam no servidor.
+
+---
+
+## Inteligência artificial e automações
+
+A Luna primeiro classifica a intenção (saudação, busca, comparação, simulação, pedido de humano) e consulta o banco. A simulação **divide** valores; não inventa juros nem aprova crédito.
+
+A integração com o Gemini está em `socialflow/ia.py`. A chave vai em `SOCIALFLOW_AI_API_KEY` (arquivo `.env` no PC ou variável da Vercel). Ela **nunca** é enviada ao navegador.
+
+Outras automações do backend:
+
+- lead e visita só com consentimento validado no servidor;
+- visita confirmada não ocupa o mesmo horário do mesmo carro;
+- veículo vendido some da vitrine e das sugestões;
+- indicadores do painel saem de contagem real, não de número fixo no HTML.
+
+---
+
+## Responsividade e acessibilidade
+
+- `viewport` em todas as páginas.
+- Grade da vitrine em uma coluna na largura estreita.
+- Link “Ir para o conteúdo”.
+- Campos com `<label>`.
+- Contraste do tema; a cor da loja no painel precisa de contraste mínimo (há teste).
+- Vídeo do hero respeita `prefers-reduced-motion` e não depende de autoplay agressivo.
+
+Isso não é um laudo WCAG. É o que o protótipo de fato implementa.
+
+---
+
+## Arquitetura e organização do projeto
+
+```text
+index.html, veiculo.html, painel.html, privacidade.html
+css/socialflow.css
+js/                 interface no navegador
+socialflow/         regras, sessão, Luna, validação
+api/                adaptador da Vercel
+migrations/         schema SQLite e MySQL
+tests/              testes automatizados
+docs/               plano e notas de publicação
+```
+
+O fluxo é direto: o navegador pede HTML e chama `/api/...`. O Python valida, consulta o banco e devolve JSON. No computador o banco é o MySQL do XAMPP. Na Vercel a demonstração usa um SQLite empacotado (limites descritos mais abaixo).
+
+---
+
+## Capturas de tela do sistema
+
+Ainda **não há arquivos** em `docs/screenshots/`. Para o PDF da faculdade e para o GitHub, tire no navegador (não use mock) e salve assim:
+
+| Arquivo sugerido | O que fotografar |
+| --- | --- |
+| `docs/screenshots/vitrine.png` | Catálogo da Lume em https://lume-veiculos.vercel.app |
+| `docs/screenshots/luna.png` | Luna aberta, com uma resposta |
+| `docs/screenshots/crm-login.png` | Tela “Painel da equipe” em `/painel` |
+| `docs/screenshots/crm-indicadores.png` | Indicadores depois do login da administração |
+| `docs/screenshots/privacidade.png` | Página `/privacidade` |
+| `docs/screenshots/vitrine-mobile.png` | Vitrine com a janela perto de 390px de largura |
+
+Quando as imagens existirem, encaixe assim:
+
+![Vitrine](docs/screenshots/vitrine.png)
+
+![Luna](docs/screenshots/luna.png)
+
+![Login do CRM](docs/screenshots/crm-login.png)
+
+![Painel](docs/screenshots/crm-indicadores.png)
+
+![Celular](docs/screenshots/vitrine-mobile.png)
+
+---
+
+## Como instalar e executar localmente
+
+Você precisa de **Python 3.11 ou mais recente** e do **MySQL do XAMPP** na porta 3306. O Apache pode ficar desligado: o sistema fala direto com o banco.
+
+```text
+python -m pip install -r requirements.txt
+copy .env.example .env
+```
+
+Coloque a chave do Gemini no `.env` se quiser a redação da Luna. Sem chave, a Luna continua no estoque.
 
 ```text
 python -m socialflow
 ```
 
-Abra [http://127.0.0.1:8080](http://127.0.0.1:8080). Não abra o HTML direto pelo disco: a página e a API precisam da mesma origem.
+Abra [http://127.0.0.1:8080](http://127.0.0.1:8080). Não abra o HTML pelo Explorer: a página e a API precisam da mesma origem.
 
-Opcional: copie `.env.example` para `.env` antes da primeira semeadura. Se o banco já existir, mudar a senha no `.env` não altera o usuário gravado. Para recomeçar do zero, apague `data/socialflow.sqlite` e suba de novo. No painel, a administração também pode usar **Restaurar demonstração**, que repõe estoque, leads e visitas desta loja e mantém os usuários.
+Na primeira subida, se o banco `socialflow` do XAMPP estiver vazio, os dados locais são copiados. **Restaurar demonstração**, no painel, devolve o conjunto da loja e mantém os usuários.
 
-### Contas locais
-
-Valem só neste ambiente. Não são senha de produção.
-
-| Papel | E-mail | Senha inicial |
-| --- | --- | --- |
-| Administração | marina.costa@lume.demo | Lume-Demo-2026 |
-| Vendas | ricardo.nunes@lume.demo | Lume-Venda-2026 |
-| Vendas | camila.duarte@lume.demo | Lume-Consulta-2026 |
-
-Vendas opera estoque, leads e agenda. Cada consultor de vendas vê os contatos direcionados a ele. A administração vê todos. Só a administração muda a configuração da loja e restaura a demonstração.
-
-Se o banco já existia antes da Camila Duarte, o próximo `python -m socialflow` cria essa conta com a senha acima (ou `SOCIALFLOW_CONSULTOR_PASSWORD`). Isso não troca a senha de quem já estava gravado.
-
-## Consultor
-
-A frase da pessoa é interpretada por regras (orçamento, câmbio, tipo, combustível, quilometragem, uso). A busca usa somente veículos **disponíveis** da Lume. Até três sugestões voltam com o motivo ligado ao cadastro. Se nada couber, a resposta diz qual filtro esvaziou a busca. “Automático” aceita automático, CVT e automatizado. “CVT” sozinho é específico.
-
-O texto livre da conversa não é gravado. Ficam as preferências já estruturadas e os identificadores sugeridos. Dá para apagar essa conversa no próprio consultor.
-
-A IA padrão é o **Gemini**. A chave fica só no servidor (`SOCIALFLOW_AI_API_KEY`, `GEMINI_API_KEY` ou `GOOGLE_API_KEY`) e nunca vai para o navegador. Sem chave, consultor e Luna continuam na automação do estoque. Com chave, o Gemini só reescreve o texto dos veículos e fatos já escolhidos. Se a resposta não bater com esses dados, ela é descartada.
-
-## Luna
-
-A Luna é a assistente da vitrine. O balão e o painel continuam no canto direito. O backend interpreta a intenção, consulta o estoque real, compara veículos, faz divisão matemática de valores e encaminha para o consultor quando a pessoa pede atendimento humano.
-
-Arquivos principais:
-
-- `socialflow/luna.py` — intenções, filtros, comparação, simulação e dados da loja
-- `socialflow/servicos.py` e `socialflow/servidor.py` — `POST /api/publico/luna`
-- `socialflow/ia.py` — redação opcional via Gemini (`generateContent`)
-- `js/luna.js` e `css/socialflow.css` — conversa, cards, digitação e ações
-
-A chave de IA, se existir, permanece só no servidor. Sem ela, a Luna continua funcional com as regras do estoque. A simulação não inventa juros nem aprova crédito. Reservar, avaliar usado e confirmar visita continuam dependendo da equipe.
-
-## Agenda
-
-Horário de Brasília, deslocamento fixo UTC−3, de hora em hora, dentro do expediente. Dois pedidos solicitados podem coincidir. Confirmar ou reagendar recusa outro horário já confirmado ou reagendado do mesmo veículo.
-
-## Stack
-
-HTML, CSS e JavaScript no navegador. Python da biblioteca padrão e SQLite no servidor. Nesta máquina não há Node.js; a stack foi escolhida para rodar sem pacote externo.
-
-Não houve publicação em Softr, Webflow, Framer ou Glide. Essas ferramentas pedem conta humana. O passo a passo, ainda não executado, está em `docs/publicacao-nocode.md`. **Não existe URL pública.**
-
-## Arquitetura
-
-```text
-index.html, veiculo.html, painel.html, privacidade.html
-css/socialflow.css
-js/                     interface
-socialflow/             regras, validação, sessão, consultor
-migrations/001_inicial.sql
-data/socialflow.sqlite  criado na primeira execução
-docs/                   plano, publicação pendente, capturas
-tests/
-```
-
-A organização pública é a de slug `lume`. O painel só enxerga a organização do usuário autenticado. Senha com scrypt, cookie `HttpOnly`, token CSRF e limite de tentativas em login, consultor e formulários.
-
-O plano de migração está em `docs/implementation-plan.md`.
-
-## Testes
-
-Comando executado na raiz do projeto:
+Testes:
 
 ```text
 python -m unittest discover -s tests -v
 ```
 
-Resultado real desta entrega: **35 testes unitários da Luna e da API, mais a suíte existente — OK**.
+---
 
-Cobrem filtro e preço, recomendação que ignora vendido e outra loja, horário e conflito, consentimento, lead, visita, CRUD que some da vitrine ao vender, imagem inválida, CSRF e ausência do domínio antigo nas telas.
+## Como acessar e testar a demonstração
 
-Não há typecheck separado: o projeto não usa anotações obrigatórias nem mypy instalado. A checagem feita foi importar e executar os testes.
+1. Vitrine: https://lume-veiculos.vercel.app  
+2. Privacidade: https://lume-veiculos.vercel.app/privacidade  
+3. CRM: https://lume-veiculos.vercel.app/painel  
+4. Fale com a Luna, por exemplo: “tem SUV até 120 mil?”  
+5. Envie um interesse marcando o consentimento.  
+6. Entre no painel.
 
-## Capturas
+Contas **somente de demonstração** (não use isso em sistema real):
 
-Feitas no navegador local, não são mock:
+| Papel | E-mail | Senha |
+| --- | --- | --- |
+| Administração | marina.costa@lume.demo | Lume-Demo-2026 |
+| Vendas | ricardo.nunes@lume.demo | Lume-Venda-2026 |
+| Vendas | camila.duarte@lume.demo | Lume-Consulta-2026 |
 
-- `docs/screenshots/vitrine.png`
-- `docs/screenshots/vitrine-estreita.png` — conteúdo medido a 390px de largura, uma coluna, sem estouro horizontal. A imagem ainda mostra área vazia ao lado porque a janela capturada era mais larga que essa coluna.
+Se no seu `.env` local você trocou a senha **depois** que o banco já existia, no PC vale a senha antiga gravada.
 
-## Verificação manual
+---
 
-No navegador embutido, em `http://127.0.0.1:8080`:
+## Limitações e melhorias futuras
 
-- a vitrine listou o estoque e omitiu o sedã vendido;
-- o filtro sedã até R$ 140.000 deixou Corolla e Civic;
-- o detalhe do Corolla abriu e o interesse de Helena Prado entrou no painel;
-- o consultor, ao ouvir “picape diesel”, respondeu que não havia veículo e apontou o combustível;
-- o login de Marina Costa mostrou 8 disponíveis, 1 reservado, 1 vendido e o Corolla com 2 interesses;
-- o status desse lead foi gravado como contatado;
-- a 390px a grade ficou em uma coluna e a página não estourou na horizontal.
+Esta versão é acadêmica.
 
-Essa verificação deixou o lead `helena.navegador@exemplo.demo` como contatado. **Restaurar demonstração** devolve o conjunto inicial.
+- As contas de demo são públicas neste README.  
+- Na Vercel o estoque vai num SQLite empacotado: lead novo pode não permanecer.  
+- A função Hobby tem pouco tempo de execução; o Gemini às vezes não reescreve e a Luna cai no script.  
+- Não há pagamento, WhatsApp, troca de senha na tela nem várias lojas na vitrine.  
+- Não é adequado para dado pessoal de cliente real.
 
-## Segurança e limites
+Melhorias possíveis: banco MySQL na nuvem, senhas só para quem apresenta, limite de uso da Luna e canal do titular além da página de privacidade.
 
-- Cookie sem marca `Secure`, porque o uso previsto é HTTP local.
-- Sem troca de senha na tela.
-- Sem multiempresa operacional: o banco já separa por organização, mas só a Lume aparece na vitrine.
-- Sem WhatsApp, cobrança ou publicação.
-- Upload aceita PNG, JPEG e WebP até 1,5 MB. SVG é recusado.
+---
 
-## O que veio do sistema anterior
+## Aprendizados durante o desenvolvimento
 
-O portal de assistência social (famílias, atendimentos, coletivos, benefícios e relatório) foi substituído. Permaneceram técnicas: HTML semântico, CSS com box model, seletores e unidades relativas, foco visível, módulos JavaScript e persistência local só para os filtros da vitrine. O estoque e os leads ficam no SQLite.
+Aprendi que a IA só é útil aqui se o estoque mandar no resultado. Construtor visual não cobria sessão, papéis e chave no servidor. Reaproveitar o CSS da vitrine no login do CRM quebrou o layout — a tela da equipe precisava ser outra. Publicar com HTTPS não resolve sozinho persistência nem senha de demonstração.
+
+---
+
+## Finalidade acadêmica
+
+Projeto da disciplina *Padrões Web para No Code e Low Code*: empresa de serviços, personalização com HTML/CSS/JavaScript, recurso de IA (Luna + Gemini) e publicação com HTTPS. Serve para avaliação e para o portfólio. Não representa operação comercial da Lume.
+
+---
+
+## Autor e considerações finais
+
+**Autor:** Gabriel Braga ([gabrielcaracini](https://github.com/gabrielcaracini))  
+**Curso:** Desenvolvimento de Software e Automação  
+
+O código, a vitrine e o painel estão neste repositório. A chave do Gemini e o arquivo `.env` **não** devem ser versionados. Se for clonar o projeto, copie `.env.example` e use dados fictícios.
+
+Dúvidas sobre o fluxo: comece pela vitrine, abra a Luna e depois entre no `/painel` com a conta da Marina.

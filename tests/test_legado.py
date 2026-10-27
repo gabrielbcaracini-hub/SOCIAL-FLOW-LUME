@@ -12,18 +12,18 @@ TERMOS = re.compile(r"\b(cras|creas|paif|paefi|scfv|rma|cadúnico|bolsa família
 class TestLegado(unittest.TestCase):
     def test_interface_sem_dominio_antigo(self):
         arquivos = list((RAIZ / "js").glob("*.js")) + list((RAIZ / "css").glob("*.css"))
-        arquivos += [RAIZ / nome for nome in ("index.html", "veiculo.html", "painel.html")]
+        arquivos += [RAIZ / nome for nome in ("index.html", "veiculo.html", "painel.html", "privacidade.html")]
         for arquivo in arquivos:
             texto = arquivo.read_text(encoding="utf-8")
             self.assertIsNone(TERMOS.search(texto), arquivo.name)
 
-    def test_sem_pagina_publica_de_privacidade(self):
-        self.assertFalse((RAIZ / "privacidade.html").exists())
+    def test_pagina_publica_de_privacidade(self):
+        self.assertTrue((RAIZ / "privacidade.html").exists())
         self.assertFalse((RAIZ / "js" / "privacidade.js").exists())
-        for nome in ("index.html", "veiculo.html"):
+        for nome in ("index.html", "veiculo.html", "painel.html"):
             texto = (RAIZ / nome).read_text(encoding="utf-8")
-            self.assertNotIn("/privacidade", texto)
-            self.assertNotIn(">Privacidade<", texto)
+            self.assertIn("/privacidade", texto)
+            self.assertIn("Privacidade", texto)
 
     def test_html_utf8(self):
         bruto = (RAIZ / "index.html").read_bytes()

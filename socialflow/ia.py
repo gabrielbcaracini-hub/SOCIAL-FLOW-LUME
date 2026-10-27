@@ -167,6 +167,7 @@ def montar_corpo_gemini(mensagens, temperatura=0):
         "contents": contents or [{"role": "user", "parts": [{"text": ""}]}],
         "generationConfig": {
             "temperature": temperatura,
+            "maxOutputTokens": 220,
             "responseMimeType": "application/json",
         },
     }
@@ -200,7 +201,7 @@ def _chamar_gemini(config, mensagens, temperatura=0):
         method="POST",
     )
     try:
-        with urllib.request.urlopen(requisicao, timeout=18) as resposta:
+        with urllib.request.urlopen(requisicao, timeout=7) as resposta:
             bruto = resposta.read(100_000)
     except (urllib.error.URLError, TimeoutError, OSError):
         return None
@@ -229,7 +230,7 @@ def _chamar_openai(config, mensagens, temperatura=0):
         method="POST",
     )
     try:
-        with urllib.request.urlopen(requisicao, timeout=18) as resposta:
+        with urllib.request.urlopen(requisicao, timeout=7) as resposta:
             bruto = resposta.read(100_000)
     except (urllib.error.URLError, TimeoutError, OSError):
         return None

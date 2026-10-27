@@ -1,6 +1,7 @@
 """Configuração local. Variáveis de ambiente e arquivo .env opcional."""
 
 import os
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -50,6 +51,14 @@ class Config:
     uploads: Path = None
     senha_consultor: str = SENHA_CONSULTOR_PADRAO
     ai_provider: str = "gemini"
+    db_driver: str = "sqlite"
+    mysql_host: str = "127.0.0.1"
+    mysql_port: int = 3306
+    mysql_user: str = "root"
+    mysql_password: str = ""
+    mysql_database: str = "socialflow"
+    cookie_seguro: bool = False
+    uploads_efemeros: bool = False
 
     def __post_init__(self):
         if self.uploads is None:
@@ -73,13 +82,18 @@ def configuracao_de_ambiente():
     provedor = (os.environ.get("SOCIALFLOW_AI_PROVIDER") or "gemini").strip().lower()
     if provedor not in {"gemini", "openai"}:
         provedor = "gemini"
+    driver = (os.environ.get("SOCIALFLOW_DB_DRIVER") or "sqlite").strip().lower()
+    if driver not in {"sqlite", "mysql"}:
+        driver = "sqlite"
     padrao_base = (
         "https://generativelanguage.googleapis.com/v1beta"
         if provedor == "gemini"
         else "https://api.openai.com/v1/chat/completions"
     )
     padrao_modelo = "gemini-3.8-flash" if provedor == "gemini" else "gpt-4o-mini"
-    return Config(
+    na_vercel = bool((os.environ.get("VERCEL") or "").strip())
+    https = (os.environ.get("SOCIALFLOW_HTTPS") or "").strip().lower() in {"1", "true", "yes"}
+    cfg = Config(
         host=os.environ.get("SOCIALFLOW_HOST", "127.0.0.1"),
         port=int(os.environ.get("SOCIALFLOW_PORT", "8080")),
         db_path=caminho,
@@ -90,4 +104,31 @@ def configuracao_de_ambiente():
         senha_vendedor=os.environ.get("SOCIALFLOW_SELLER_PASSWORD", SENHA_VENDEDOR_PADRAO),
         senha_consultor=os.environ.get("SOCIALFLOW_CONSULTOR_PASSWORD", SENHA_CONSULTOR_PADRAO),
         ai_provider=provedor,
+        db_driver=driver,
+        mysql_host=os.environ.get("SOCIALFLOW_MYSQL_HOST", "127.0.0.1").strip() or "127.0.0.1",
+        mysql_port=int(os.environ.get("SOCIALFLOW_MYSQL_PORT", "3306")),
+        mysql_user=os.environ.get("SOCIALFLOW_MYSQL_USER", "root").strip() or "root",
+        mysql_password=os.environ.get("SOCIALFLOW_MYSQL_PASSWORD", ""),
+        mysql_database=os.environ.get("SOCIALFLOW_MYSQL_DATABASE", "socialflow").strip() or "socialflow",
+        cookie_seguro=https or na_vercel,
+        uploads_efemeros=na_vercel,
     )
+    return _ajustar_nuvem(cfg, na_vercel)
+
+
+def _ajustar_nuvem(cfg, na_vercel):
+    if not na_vercel:
+        return cfg
+    mysql_local = cfg.mysql_host in {"127.0.0.1", "localhost", ""}
+    if cfg.db_driver == "mysql" and mysql_local:
+        cfg.db_driver = "sqlite"
+    if cfg.db_driver == "sqlite":
+        destino = Path("/tmp/socialflow.sqlite")
+        origem = RAIZ / "socialflow" / "loja-seed.sqlite"
+        if not origem.is_file():
+            origem = RAIZ / "data" / "socialflow.sqlite"
+        if origem.is_file() and not destino.is_file():
+            shutil.copy2(origem, destino)
+        cfg.db_path = destino
+        cfg.uploads = Path("/tmp/uploads")
+    return cfg

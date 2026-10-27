@@ -17,11 +17,20 @@ def main(argv=None):
             "Uso:\n"
             "  python -m socialflow          sobe a vitrine e o painel\n"
             "  python -m socialflow seed     cria o banco se ele ainda não existe\n"
+            "  python -m socialflow migrar-mysql   copia o SQLite local para o MySQL do XAMPP\n"
         )
         return 0
     if len(argv) > 1 and argv[1] == "seed":
         preparar_banco(config)
-        sys.stdout.write("Banco local pronto em %s\n" % config.db_path)
+        if config.db_driver == "mysql":
+            sys.stdout.write("Banco pronto no XAMPP: %s\n" % config.mysql_database)
+        else:
+            sys.stdout.write("Banco local pronto em %s\n" % config.db_path)
+        return 0
+    if len(argv) > 1 and argv[1] == "migrar-mysql":
+        config.db_driver = "mysql"
+        preparar_banco(config)
+        sys.stdout.write("Migração para o XAMPP concluída no banco %s.\n" % config.mysql_database)
         return 0
     if len(argv) > 1 and argv[1] not in {"serve", "servir"}:
         sys.stderr.write("Comando desconhecido. Use: python -m socialflow\n")

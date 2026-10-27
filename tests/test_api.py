@@ -297,6 +297,23 @@ class TestApi(unittest.TestCase):
         lume = self._id_codigo("EST-1001")
         status, _ = outra.pedir("GET", "/api/admin/veiculos/" + lume)
         self.assertEqual(status, 404)
+        status, recusa = self.cliente.pedir("POST", "/api/admin/veiculos", {
+            "marca": "Fiat",
+            "modelo": "Mobi",
+            "versao": "Like",
+            "ano_fabricacao": 2022,
+            "ano_modelo": 2023,
+            "km": 8000,
+            "cambio": "manual",
+            "combustivel": "flex",
+            "tipo": "hatch",
+            "preco_reais": "55000,00",
+            "status": "disponivel",
+            "cor": "Branco",
+            "descricao": "Tentativa de cadastro por perfil de vendas.",
+            "codigo": "EST-VENDA",
+        })
+        self.assertEqual(status, 403, recusa)
 
     def test_crud_some_da_recomendacao_quando_vendido(self):
         self._entrar(ADMIN_EMAIL, "Teste-Admin-2026")

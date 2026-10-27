@@ -45,6 +45,11 @@
     const tipo = resposta.headers.get("content-type") || "";
     const dados = tipo.indexOf("json") >= 0 ? await resposta.json() : null;
     if (dados && dados.csrf) SocialFlow.csrf = dados.csrf;
+    if (resposta.status === 403 && opts.json !== undefined && !opts._csrfRetry) {
+      SocialFlow.csrf = "";
+      await SocialFlow.preparar();
+      return SocialFlow.api(caminho, Object.assign({}, opts, { _csrfRetry: true }));
+    }
     if (!resposta.ok) {
       const erro = new Error((dados && dados.erro) || "Não foi possível concluir.");
       erro.status = resposta.status;

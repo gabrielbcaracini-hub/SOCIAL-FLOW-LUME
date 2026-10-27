@@ -93,5 +93,8 @@ def decodificar_imagem(conteudo_b64):
     raise ErroHttp(400, "Envie uma imagem PNG, JPEG ou WebP.", {"imagem": "Tipo não aceito."})
 
 
-def cookie(nome, valor, max_age):
-    return f"{nome}={valor}; HttpOnly; SameSite=Lax; Path=/; Max-Age={max_age}"
+def cookie(nome, valor, max_age, seguro=False):
+    marca = f"{nome}={valor}; HttpOnly; SameSite=Lax; Path=/; Max-Age={max_age}"
+    if seguro:
+        marca += "; Secure"
+    return marca

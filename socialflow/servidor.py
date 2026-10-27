@@ -16,6 +16,8 @@ PAGINAS = {
     "/veiculo.html": "veiculo.html",
     "/painel": "painel.html",
     "/painel.html": "painel.html",
+    "/privacidade": "privacidade.html",
+    "/privacidade.html": "privacidade.html",
 }
 
 TIPOS = {
@@ -29,6 +31,7 @@ TIPOS = {
     ".webp": "image/webp",
     ".gif": "image/gif",
     ".ico": "image/x-icon",
+    ".mp4": "video/mp4",
 }
 
 HTML_404 = """<!DOCTYPE html>
@@ -73,6 +76,29 @@ def _cookies(cabecalho):
     return saida
 
 
+def _intervalo_bytes(cabecalho, total):
+    if not cabecalho or total <= 0 or not cabecalho.startswith("bytes="):
+        return None
+    pedaco = cabecalho[6:].split(",", 1)[0].strip()
+    if "-" not in pedaco:
+        return None
+    inicio_txt, fim_txt = pedaco.split("-", 1)
+    try:
+        if inicio_txt == "" and fim_txt:
+            tamanho = int(fim_txt)
+            inicio = max(0, total - tamanho)
+            return inicio, total - 1
+        inicio = int(inicio_txt) if inicio_txt else 0
+        fim = int(fim_txt) if fim_txt else total - 1
+    except ValueError:
+        return None
+    if inicio >= total:
+        return None
+    inicio = max(0, inicio)
+    fim = min(total - 1, max(inicio, fim))
+    return inicio, fim
+
+
 def _arquivo_estatico(caminho):
     if not caminho.startswith(("/css/", "/js/", "/assets/")):
         raise ErroHttp(404, "Não encontrado.")
@@ -87,6 +113,16 @@ def _arquivo_estatico(caminho):
     if alvo.suffix.lower() not in TIPOS or not alvo.is_file():
         raise ErroHttp(404, "Não encontrado.")
     return alvo
+
+
+def bytes_estaticos(caminho):
+    if caminho in PAGINAS:
+        alvo = RAIZ / PAGINAS[caminho]
+        if not alvo.is_file():
+            raise ErroHttp(404, "Não encontrado.")
+        return alvo.read_bytes(), "text/html; charset=utf-8"
+    alvo = _arquivo_estatico(caminho)
+    return alvo.read_bytes(), TIPOS[alvo.suffix.lower()]
 
 
 def _despachar(pedido):
@@ -184,15 +220,57 @@ def _despachar(pedido):
     raise ErroHttp(404, "Recurso não encontrado.")
 
 
+CABECALHOS_PADRAO = {
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Content-Security-Policy": (
+        "default-src 'self'; img-src 'self' data: blob:; media-src 'self'; "
+        "style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; "
+        "frame-ancestors 'none'; object-src 'none'"
+    ),
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+}
+
+
+def responder_api(pedido):
+    try:
+        if pedido.metodo == "GET" and pedido.caminho.startswith("/midia/"):
+            partes = pedido.caminho.rstrip("/").split("/")
+            identificador = partes[2] if len(partes) > 2 else ""
+            conteudo, tipo = servicos.ler_midia(pedido, identificador)
+            return 200, conteudo, tipo, []
+        payload, cookies, status = _despachar(pedido)
+        corpo = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        return status, corpo, "application/json; charset=utf-8", cookies
+    except ErroHttp as erro:
+        corpo = json.dumps({"erro": erro.mensagem, "campos": erro.campos}, ensure_ascii=False).encode("utf-8")
+        return erro.status, corpo, "application/json; charset=utf-8", []
+    except Exception:
+        sys.stderr.write("erro interno\n")
+        corpo = json.dumps({"erro": "Não foi possível concluir a operação."}, ensure_ascii=False).encode("utf-8")
+        return 500, corpo, "application/json; charset=utf-8", []
+
+
 def preparar_banco(config):
     from socialflow import banco, semear
 
-    config.db_path.parent.mkdir(parents=True, exist_ok=True)
     config.uploads.mkdir(parents=True, exist_ok=True)
-    conn = banco.conectar(config.db_path)
+    if config.db_driver == "sqlite":
+        config.db_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = banco.conectar(config)
     try:
         banco.migrar(conn)
-        banco.garantir_origem_contato(conn)
+        if config.db_driver == "mysql":
+            copiou = banco.importar_sqlite_se_vazio(conn, config)
+            if copiou:
+                sys.stdout.write(
+                    "Banco do XAMPP recebeu os dados locais da loja (%s).\n" % config.mysql_database
+                )
+                sys.stdout.flush()
+        else:
+            banco.garantir_origem_contato(conn)
         semear.semear(conn, config.senha_admin, config.senha_vendedor, config.senha_consultor)
         semear.garantir_consultor(conn, config.senha_consultor)
         semear.garantir_estoque(conn)
@@ -242,17 +320,11 @@ def fabrica(config):
                     corpo, _cookies(self.headers.get("Cookie")),
                     self.client_address[0], self.headers.get("X-CSRF-Token", ""),
                 )
-                if self.command == "GET" and caminho.startswith("/midia/"):
-                    conteudo, tipo = servicos.ler_midia(pedido, caminho.split("/")[2])
-                    self._bytes(200, conteudo, tipo)
-                    return
-                payload, cookies, status = _despachar(pedido)
-                self._json(status, payload, cookies)
+                status, conteudo, tipo, cookies = responder_api(pedido)
+                self._bytes(status, conteudo, tipo, cookies)
             except ErroHttp as erro:
-                self._json(erro.status, {"erro": erro.mensagem, "campos": erro.campos})
-            except Exception:
-                sys.stderr.write("erro interno\n")
-                self._json(500, {"erro": "Não foi possível concluir a operação."})
+                corpo = json.dumps({"erro": erro.mensagem, "campos": erro.campos}, ensure_ascii=False).encode("utf-8")
+                self._bytes(erro.status, corpo, "application/json; charset=utf-8")
 
         def _ler_corpo(self, caminho):
             if self.command == "GET":
@@ -279,24 +351,28 @@ def fabrica(config):
             if not caminho.is_file():
                 self._bytes(404, HTML_404, "text/html; charset=utf-8")
                 return
-            self._bytes(200, caminho.read_bytes(), tipo)
+            bruto = caminho.read_bytes()
+            extras = {}
+            if tipo.startswith("video/"):
+                extras["Accept-Ranges"] = "bytes"
+                faixa = _intervalo_bytes(self.headers.get("Range"), len(bruto))
+                if faixa:
+                    inicio, fim = faixa
+                    extras["Content-Range"] = "bytes %s-%s/%s" % (inicio, fim, len(bruto))
+                    self._bytes(206, bruto[inicio:fim + 1], tipo, extras=extras)
+                    return
+            self._bytes(200, bruto, tipo, extras=extras)
 
-        def _json(self, status, payload, cookies=None):
-            corpo = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-            self._bytes(status, corpo, "application/json; charset=utf-8", cookies)
-
-        def _bytes(self, status, corpo, tipo, cookies=None):
+        def _bytes(self, status, corpo, tipo, cookies=None, extras=None):
             try:
                 self.send_response(status)
                 self.send_header("Content-Type", tipo)
                 self.send_header("Content-Length", str(len(corpo)))
-                self.send_header("Cache-Control", "no-store")
-                self.send_header("X-Content-Type-Options", "nosniff")
-                self.send_header("Referrer-Policy", "no-referrer")
-                self.send_header("X-Frame-Options", "DENY")
-                self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'")
-                self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+                for chave, valor in CABECALHOS_PADRAO.items():
+                    self.send_header(chave, valor)
                 self.send_header("Connection", "close")
+                for chave, valor in (extras or {}).items():
+                    self.send_header(chave, valor)
                 for item in cookies or []:
                     self.send_header("Set-Cookie", item)
                 self.end_headers()

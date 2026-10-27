@@ -1367,10 +1367,101 @@ body[data-pagina="painel"] h1 {
   letter-spacing: -0.03em;
 }
 
-body[data-pagina="painel"] .entrada {
-  max-width: 26rem;
-  margin: 4rem auto 0;
-  padding: 0 1rem 3rem;
+.login-crm {
+  display: grid;
+  gap: 1.6rem;
+  min-height: 100vh;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.4rem;
+  box-sizing: border-box;
+  align-content: center;
+  justify-items: stretch;
+}
+
+.login-crm-lado,
+.login-crm-caixa {
+  width: min(100%, 26rem);
+  justify-self: center;
+}
+
+.login-crm-lado {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+}
+
+.login-crm-selo {
+  margin: 1.1rem 0 0;
+  color: var(--acento);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.login-crm h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  line-height: 1.15;
+}
+
+.login-crm-texto {
+  margin: 0;
+  color: var(--suave);
+  max-width: 22rem;
+}
+
+.login-crm-caixa {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.35rem 1.25rem 1.2rem;
+  background: #121212;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 1.15rem;
+}
+
+.login-crm-caixa h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.login-crm-caixa > p {
+  margin: 0 0 0.4rem;
+  color: var(--suave);
+  font-size: 0.92rem;
+}
+
+.login-crm-caixa .formulario {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.login-crm-caixa button[type="submit"] {
+  width: 100%;
+}
+
+.login-crm-voltar {
+  margin: 0;
+  text-align: center;
+}
+
+@media (min-width: 52rem) {
+  .login-crm {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    padding: 2.4rem 4vw;
+    column-gap: 3rem;
+  }
+
+  .login-crm-lado,
+  .login-crm-caixa {
+    width: min(100%, 28rem);
+  }
+
+  .login-crm-lado { justify-self: end; }
+  .login-crm-caixa { justify-self: start; }
 }
 
 .barra-usuario {

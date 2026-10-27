@@ -30,7 +30,7 @@
   function pausaNatural(texto) {
     const n = String(texto || "").length;
     return new Promise(function (ok) {
-      window.setTimeout(ok, Math.min(1600, Math.max(700, 520 + n * 9)));
+      window.setTimeout(ok, Math.min(720, Math.max(220, 140 + n * 4)));
     });
   }
 

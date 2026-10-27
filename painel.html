@@ -10,20 +10,30 @@
 </head>
 <body data-pagina="painel">
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
-  <main id="tela-entrada" class="miolo entrada">
-    <a class="marca" href="/">
-      <img src="/assets/marca.jpg" width="40" height="40" alt="SocialFlow Auto">
-      <span><strong>SocialFlow Auto</strong><span>Lume Veículos</span></span>
-    </a>
-    <h1>Entrar no painel</h1>
-    <p class="lede">Área da equipe da loja. Visitante não vê estes dados.</p>
-    <p class="aviso-demo">Ambiente local. As senhas iniciais estão no README e valem só para esta demonstração.</p>
-    <form id="form-entrada" class="formulario card">
-      <label class="campo" for="email">E-mail<input id="email" name="email" type="email" autocomplete="username" required></label>
-      <label class="campo" for="senha">Senha<input id="senha" name="senha" type="password" autocomplete="current-password" required></label>
-      <button type="submit">Entrar</button>
-      <p><a href="/">Voltar à vitrine</a></p>
-    </form>
+  <main id="tela-entrada" class="login-crm">
+    <section class="login-crm-lado">
+      <a class="marca" href="/">
+        <img src="/assets/marca.jpg" width="48" height="48" alt="SocialFlow Auto">
+        <span><strong>SocialFlow Auto</strong><span>Lume Veículos</span></span>
+      </a>
+      <p class="login-crm-selo">CRM da loja</p>
+      <h1>Painel da equipe</h1>
+      <p class="login-crm-texto">Indicadores, estoque, leads e visitas. O visitante da vitrine não entra aqui.</p>
+    </section>
+    <section class="login-crm-caixa">
+      <h2>Entrar</h2>
+      <p>Use o e-mail e a senha da sua conta da loja.</p>
+      <form id="form-entrada" class="formulario">
+        <label class="campo" for="email">E-mail
+          <input id="email" name="email" type="email" autocomplete="username" required>
+        </label>
+        <label class="campo" for="senha">Senha
+          <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Entrar no CRM</button>
+        <p class="login-crm-voltar"><a href="/">Voltar à vitrine</a></p>
+      </form>
+    </section>
   </main>
   <div id="aplicacao" class="aplicacao" hidden>
     <aside class="barra">
@@ -69,6 +79,7 @@
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7.5A6.5 6.5 0 1 1 5.6 12M7 4.8v3.4H3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Restaurar demonstração
         </button>
+        <p><a href="/privacidade">Privacidade</a></p>
       </div>
     </aside>
     <div class="conteudo-painel">

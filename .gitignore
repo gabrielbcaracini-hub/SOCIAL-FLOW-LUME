@@ -1,4 +1,7 @@
 .env
+.env.local
+.vercel
+socialflow/loja-seed.sqlite
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -10,3 +13,4 @@ data/*.sqlite-shm
 data/uploads/*
 !data/uploads/.gitkeep
 _pdf_extract.txt
+.vercel
