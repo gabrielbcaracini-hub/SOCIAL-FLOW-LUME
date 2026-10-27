@@ -259,7 +259,7 @@ Projeto da disciplina *Padrões Web para No Code e Low Code*: empresa de serviç
 
 ## Autor e considerações finais
 
-**Autor:** Gabriel Braga ([gabrielcaracini](https://github.com/gabrielcaracini))  
+**Autor:** Gabriel Braga ([gabrielbcaracini-hub](https://github.com/gabrielbcaracini-hub/SOCIAL-FLOW-LUME))  
 **Curso:** Desenvolvimento de Software e Automação  
 
 O código, a vitrine e o painel estão neste repositório. A chave do Gemini e o arquivo `.env` **não** devem ser versionados. Se for clonar o projeto, copie `.env.example` e use dados fictícios.
