@@ -90,7 +90,7 @@ ROTULOS = {
         "trabalho": "trabalho",
         "viagem": "viagem",
     },
-    "papel": {"admin": "Administração", "vendedor": "Vendas"},
+    "papel": {"admin": "Administração", "vendedor": "Consultor"},
     "dia": {
         "seg": "segunda-feira",
         "ter": "terça-feira",

@@ -17,8 +17,8 @@
         <span><strong>SocialFlow Auto</strong><span>Lume Veículos</span></span>
       </a>
       <p class="login-crm-selo">CRM da loja</p>
-      <h1>Painel da equipe</h1>
-      <p class="login-crm-texto">Indicadores, estoque, leads e visitas. O visitante da vitrine não entra aqui.</p>
+      <h1>Entrar no CRM</h1>
+      <p class="login-crm-texto">O e-mail decide o painel: administração vê a loja inteira. Consultor vê os leads dele, o estoque e as visitas.</p>
     </section>
     <section class="login-crm-caixa">
       <h2>Entrar</h2>
@@ -42,7 +42,7 @@
         <span><strong>SocialFlow Auto</strong></span>
       </a>
       <nav class="menu" aria-label="Painel">
-        <button type="button" data-abre="indicadores">
+        <button type="button" id="abre-indicadores" data-abre="indicadores">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 13h4v7H4zM10 4h4v16h-4zM16 9h4v11h-4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
           Indicadores
         </button>
@@ -192,9 +192,35 @@
           <header class="painel-topo">
             <div>
               <h1>Visitas</h1>
-              <p>Confirmar e reagendar recusam horário já ocupado pelo mesmo veículo. O pedido do visitante não confirma sozinho.</p>
+              <p id="texto-agenda">Confirmar e reagendar recusam horário já ocupado pelo mesmo veículo. O pedido do visitante não confirma sozinho.</p>
             </div>
           </header>
+          <form id="form-visita" class="formulario card">
+            <h2>Marcar visita</h2>
+            <div class="grade-campos">
+              <label class="campo">Lead
+                <select name="lead_id" id="visita-lead">
+                  <option value="">Novo contato</option>
+                </select>
+              </label>
+              <label class="campo">Nome<input name="nome" required></label>
+              <label class="campo">Telefone<input name="telefone" required></label>
+              <label class="campo">E-mail<input name="email" type="email" required></label>
+              <label class="campo">Veículo
+                <select name="veiculo_id" id="visita-veiculo" required>
+                  <option value="">Escolha</option>
+                </select>
+              </label>
+              <label class="campo">Tipo
+                <select name="tipo">
+                  <option value="visita">Visita</option>
+                  <option value="test_drive">Test-drive</option>
+                </select>
+              </label>
+              <label class="campo">Horário<input name="inicio" type="datetime-local" required></label>
+            </div>
+            <button type="submit">Registrar visita</button>
+          </form>
           <div id="lista-agenda" class="secao"></div>
         </section>
         <section id="secao-config" class="secao" data-secao-painel hidden>

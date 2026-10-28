@@ -402,7 +402,7 @@ def criar_contato(pedido, corpo):
                     raise ErroHttp(409, "Esse veículo não está na vitrine.")
                 veiculo_id = veiculo["id"]
             lead_id = _gravar_lead(
-                conn, org["id"], veiculo_id, "contato", dados["nome"], "", dados["email"],
+                conn, org["id"], veiculo_id, "contato", dados["nome"], dados["telefone"], dados["email"],
                 {"canal": "contato", "consultor_id": consultor["id"]}, dados["mensagem"],
                 consultor["id"],
             )
@@ -676,37 +676,40 @@ def luna_assistente(pedido, corpo):
             modo = "deterministico"
             aviso_ia = ""
             texto = resultado.get("texto") or "Consultei o estoque da loja."
+            fatos_ia = {
+                "mensagem": mensagem,
+                "intencao": resultado.get("intencao"),
+                "ids": [item["id"] for item in sugestoes],
+                "veiculos": [
+                    {
+                        "id": item["id"],
+                        "nome": item.get("nome"),
+                        "preco": item.get("preco"),
+                        "motivos": item.get("motivos") or [],
+                    }
+                    for item in sugestoes + alternativas
+                ],
+                "simulacao": resultado.get("simulacao"),
+                "acao": resultado.get("acao"),
+                "loja": {
+                    "nome": config["trade_name"],
+                    "endereco": config["address_public"],
+                },
+                "preferencias": ia.prefs_publicas(resultado.get("preferencias") or {}),
+            }
+            texto = ia.redigir_luna_local(texto, fatos_ia)
             if pedido.config.ai_key:
-                fatos_ia = {
-                    "mensagem": mensagem,
-                    "intencao": resultado.get("intencao"),
-                    "ids": [item["id"] for item in sugestoes],
-                    "veiculos": [
-                        {"id": item["id"], "nome": item.get("nome"), "preco": item.get("preco")}
-                        for item in sugestoes + alternativas
-                    ],
-                    "simulacao": resultado.get("simulacao"),
-                    "acao": resultado.get("acao"),
-                    "loja": {
-                        "nome": config["trade_name"],
-                        "endereco": config["address_public"],
-                    },
-                    "preferencias": ia.prefs_publicas(resultado.get("preferencias") or {}),
-                }
-                if resultado.get("intencao") == "fora":
-                    texto_ia = ia.auxiliar_fora(mensagem, fatos_ia, pedido.config)
-                    if texto_ia:
-                        modo = "generativo_fora"
-                else:
-                    texto_ia = ia.redigir_luna(texto, fatos_ia, pedido.config)
-                    if texto_ia:
-                        modo = "generativo"
+                try:
+                    if resultado.get("intencao") == "fora":
+                        texto_ia = ia.auxiliar_fora(mensagem, fatos_ia, pedido.config)
+                    else:
+                        texto_ia = ia.redigir_luna(texto, fatos_ia, pedido.config)
+                except Exception:
+                    texto_ia = None
                 if texto_ia:
                     texto = texto_ia
-                else:
-                    texto = ia.embelezar_luna(texto, resultado.get("intencao") or "")
-            else:
-                texto = ia.embelezar_luna(texto, resultado.get("intencao") or "")
+                    modo = "generativo_fora" if resultado.get("intencao") == "fora" else "generativo"
+            texto = ia.garantir_saudacao(mensagem, ia.embelezar_luna(texto, resultado.get("intencao") or ""))
             prefs_salvas = resultado.get("preferencias") or prefs
             conn.execute(
                 "UPDATE chat_sessions SET preference_json = ?, updated_at = ? WHERE id = ? AND organization_id = ?",
@@ -808,7 +811,7 @@ def _contar(conn, sql, params):
 def _filtro_lead(usuario):
     if usuario["role"] == "admin":
         return "", []
-    return " AND (l.origin NOT IN ('contato', 'detalhe') OR l.assignee_id = ?)", [usuario["id"]]
+    return " AND l.assignee_id = ?", [usuario["id"]]
 
 
 def _serie_leads(conn, org_id, extra, extra_params, inicio, dias):
@@ -1144,13 +1147,8 @@ def _lead_json(row, veiculo):
     }
 
 
-_ORIGENS_DO_CONSULTOR = ("contato", "detalhe")
-
-
 def _lead_visivel(usuario, row):
     if usuario["role"] == "admin":
-        return True
-    if row["origin"] not in _ORIGENS_DO_CONSULTOR:
         return True
     return row["assignee_id"] == usuario["id"]
 
@@ -1167,7 +1165,7 @@ def listar_leads(pedido):
         """
         params = [usuario["organization_id"]]
         if usuario["role"] != "admin":
-            consulta += " AND (l.origin NOT IN ('contato', 'detalhe') OR l.assignee_id = ?)"
+            consulta += " AND l.assignee_id = ?"
             params.append(usuario["id"])
         consulta += " ORDER BY l.created_at DESC"
         rows = conn.execute(consulta, tuple(params)).fetchall()
@@ -1287,17 +1285,78 @@ def _agenda_json(conn, row):
 def listar_agenda(pedido):
     with _conexao(pedido) as conn:
         usuario = _exigir_usuario(conn, pedido)
-        rows = conn.execute(
-            """
+        consulta = """
             SELECT a.*, v.brand, v.model, v.version, v.stock_code
             FROM appointments a
             JOIN vehicles v ON v.id = a.vehicle_id AND v.organization_id = a.organization_id
+            LEFT JOIN leads l ON l.id = a.lead_id AND l.organization_id = a.organization_id
             WHERE a.organization_id = ?
-            ORDER BY a.starts_at
-            """,
-            (usuario["organization_id"],),
-        ).fetchall()
+        """
+        params = [usuario["organization_id"]]
+        if usuario["role"] != "admin":
+            consulta += " AND l.assignee_id = ?"
+            params.append(usuario["id"])
+        consulta += " ORDER BY a.starts_at"
+        rows = conn.execute(consulta, tuple(params)).fetchall()
         return {"agendamentos": [_agenda_json(conn, row) for row in rows]}, []
+
+
+def criar_agenda_equipe(pedido, corpo):
+    if not isinstance(corpo, dict):
+        raise ErroHttp(400, "Pedido de visita inválido.")
+    dados = validacao.payload_agenda_equipe(corpo)
+    inicio = parse_inicio(dados["inicio"])
+    with _conexao(pedido) as conn:
+        _exigir_csrf(conn, pedido)
+        usuario = _exigir_usuario(conn, pedido)
+        config = _configuracao(conn, usuario["organization_id"])
+        expediente = carregar_json(config["hours_json"], {})
+        local, fim = agenda.validar_janela(inicio, expediente)
+        lead_id = corpo.get("lead_id") or ""
+        with _transacao(conn):
+            veiculo = _veiculo_org(conn, usuario["organization_id"], dados["veiculo_id"])
+            if not pode_agendar(veiculo["status"]):
+                raise ErroHttp(409, "Só agendamos visita para veículo disponível.")
+            if lead_id:
+                lead = conn.execute(
+                    "SELECT * FROM leads WHERE id = ? AND organization_id = ?",
+                    (lead_id, usuario["organization_id"]),
+                ).fetchone()
+                if not lead or not _lead_visivel(usuario, lead):
+                    raise ErroHttp(404, "Lead não encontrado nesta loja.")
+                if usuario["role"] != "admin" and not lead["assignee_id"]:
+                    conn.execute(
+                        "UPDATE leads SET assignee_id = ?, updated_at = ? WHERE id = ?",
+                        (usuario["id"], iso(), lead["id"]),
+                    )
+            else:
+                resumo = f"Visita marcada pela equipe: {rotulo('visita', dados['tipo'])} para {veiculo['stock_code']}."
+                lead_id = _gravar_lead(
+                    conn, usuario["organization_id"], veiculo["id"], "visita",
+                    dados["nome"], dados["telefone"], dados["email"],
+                    {"veiculo_id": veiculo["id"], "tipo": dados["tipo"], "origem": "crm"},
+                    resumo, usuario["id"] if usuario["role"] != "admin" else None,
+                )
+            agenda_id = _id()
+            momento = iso()
+            conn.execute(
+                """
+                INSERT INTO appointments (
+                    id, organization_id, lead_id, vehicle_id, kind, status, starts_at, ends_at,
+                    contact_name, contact_phone, contact_email, notes, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, 'solicitado', ?, ?, ?, ?, ?, '', ?, ?)
+                """,
+                (
+                    agenda_id, usuario["organization_id"], lead_id, veiculo["id"], dados["tipo"],
+                    iso(local), iso(fim), dados["nome"], dados["telefone"], dados["email"], momento, momento,
+                ),
+            )
+            _auditar(conn, usuario["organization_id"], usuario["id"], "marcar_visita", "appointment", agenda_id)
+        return {
+            "id": agenda_id,
+            "status": "solicitado",
+            "mensagem": "Visita registrada. Confirme o horário para reservar a agenda.",
+        }, []
 
 
 def transicao_agenda(pedido, agenda_id, acao, corpo):
@@ -1306,10 +1365,17 @@ def transicao_agenda(pedido, agenda_id, acao, corpo):
         usuario = _exigir_usuario(conn, pedido)
         with _transacao(conn):
             row = conn.execute(
-                "SELECT * FROM appointments WHERE id = ? AND organization_id = ?",
+                """
+                SELECT a.*, l.assignee_id
+                FROM appointments a
+                LEFT JOIN leads l ON l.id = a.lead_id AND l.organization_id = a.organization_id
+                WHERE a.id = ? AND a.organization_id = ?
+                """,
                 (agenda_id, usuario["organization_id"]),
             ).fetchone()
             if not row:
+                raise ErroHttp(404, "Agendamento não encontrado nesta loja.")
+            if usuario["role"] != "admin" and row["assignee_id"] != usuario["id"]:
                 raise ErroHttp(404, "Agendamento não encontrado nesta loja.")
             config = _configuracao(conn, usuario["organization_id"])
             expediente = carregar_json(config["hours_json"], {})

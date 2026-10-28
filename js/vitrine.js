@@ -109,6 +109,58 @@
     if (topo) topo.value = "";
   }
 
+  function iniciarCarrossel() {
+    const caixa = document.getElementById("carrossel-vitrine");
+    if (!caixa) return;
+    const slides = caixa.querySelectorAll("[data-carrossel-slide]");
+    const bolinhas = caixa.querySelectorAll(".carrossel-bolinhas button");
+    const janela = caixa.querySelector(".carrossel-janela");
+    if (slides.length < 2) return;
+    let indice = 0;
+    let timer = 0;
+    const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function mostrar(i) {
+      indice = (i + slides.length) % slides.length;
+      slides.forEach(function (slide, pos) {
+        slide.classList.toggle("ativo", pos === indice);
+      });
+      if (bolinhas.length) {
+        bolinhas.forEach(function (botao, pos) {
+          botao.setAttribute("aria-selected", pos === indice ? "true" : "false");
+        });
+      }
+    }
+
+    function parar() {
+      window.clearInterval(timer);
+      timer = 0;
+    }
+
+    function andar(ms) {
+      parar();
+      if (reduzido) return;
+      timer = window.setInterval(function () {
+        mostrar(indice + 1);
+      }, ms);
+    }
+
+    bolinhas.forEach(function (botao, pos) {
+      botao.addEventListener("click", function () {
+        mostrar(pos);
+        andar(caixa.matches(":hover") ? 900 : 4200);
+      });
+    });
+
+    caixa.addEventListener("mouseenter", function () { andar(900); });
+    caixa.addEventListener("mouseleave", function () { andar(4200); });
+    if (janela) {
+      janela.addEventListener("focus", function () { andar(900); });
+      janela.addEventListener("blur", function () { andar(4200); });
+    }
+    andar(4200);
+  }
+
   function entrarConsulta() {
     const jaEstava = document.body.classList.contains("modo-consulta");
     document.body.classList.add("modo-consulta");
@@ -128,12 +180,14 @@
 
   async function iniciar() {
     aceleraHero();
+    iniciarCarrossel();
     const consultaInicial = window.location.hash === "#consulta";
     marcarNav(consultaInicial ? "consulta" : (document.body.dataset.pagina || "vitrine"));
     if (consultaInicial) document.body.classList.add("modo-consulta");
     try {
       const ctx = await SocialFlow.preparar();
       SocialFlow.preencherLoja(ctx.loja);
+      SocialFlow.montarPerfilCrm(ctx.usuario);
     } catch (erro) {
       SocialFlow.avisar(SocialFlow.erro(erro), "erro");
     }

@@ -174,6 +174,9 @@ def _despachar(pedido):
     if metodo == "GET" and caminho == "/api/admin/agendamentos":
         payload, cookies = servicos.listar_agenda(pedido)
         return payload, cookies, 200
+    if metodo == "POST" and caminho == "/api/admin/agendamentos":
+        payload, cookies = servicos.criar_agenda_equipe(pedido, pedido.corpo)
+        return payload, cookies, 201
     if metodo == "GET" and caminho == "/api/admin/configuracoes":
         payload, cookies = servicos.obter_config(pedido)
         return payload, cookies, 200

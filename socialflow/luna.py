@@ -140,14 +140,19 @@ def identificar_intencao(mensagem, intencao_forcada=None, ultima=None):
                                 "qual o preco", "ainda esta disponivel", "ver detalhes", "detalhes desse",
                                 "tem camera", "possui multim", "quantos cavalos")):
         return "detalhes"
+    if any(t in texto for t in (
+        "procur", "recomenda", "me indica", "quais opcoes", "quais opcoes",
+        "quero um", "quero uma", "estou a procura", "no dia a dia",
+    )):
+        return "busca"
     if ultima == "simulacao" and re.search(r"\b\d+\s*(?:x|vezes|parcelas)\b", texto):
         return "simulacao"
-    if ultima == "comparacao" and (" ou " in texto or " e " in texto):
+    if ultima == "comparacao" and ("compare " in texto or "comparar " in texto or " ou " in texto):
         return "comparacao"
-    if ultima == "detalhes":
+    if ultima == "detalhes" and not parece_automotivo(mensagem):
         return "detalhes"
-    if ultima in {"busca", "simulacao", "comparacao"} and (parece_automotivo(mensagem) or re.search(r"\d", texto)):
-        return ultima
+    if ultima == "busca" and (parece_automotivo(mensagem) or re.search(r"\d", texto)):
+        return "busca"
     if any(t in texto for t in ("tem ", "existe ", "disponivel", "procuro")):
         return "busca"
     if any(t in texto for t in ("sobre o ", "sobre a ", "sobre os ", "saber mais")):
@@ -577,12 +582,25 @@ def _abrir_especialidade(intencao, prefs):
 
 def _voz_busca(resultado, nome_loja):
     if resultado["correspondencia"] == "exata" and resultado.get("sugestoes"):
+        nomes = []
+        texto = resultado["texto"]
+        if ":" in texto:
+            trecho = texto.split(":", 1)[1]
+            trecho = trecho.split("Cada motivo", 1)[0].strip(" .")
+            nomes = [parte.strip() for parte in trecho.split(",") if parte.strip()]
+        if nomes:
+            lista = ", ".join(nomes[:-1]) + " e " + nomes[-1] if len(nomes) > 1 else nomes[0]
+            return (
+                f"Separei {len(nomes)} opção(ões) no estoque da {nome_loja} que combinam com o que você pediu: {lista}. "
+                "Os cards abaixo vêm do cadastro. Qual te chamou mais atenção? Posso comparar, simular o valor "
+                "ou te passar para um consultor negociar as condições."
+            )
         return (
-            resultado["texto"].replace(f"Na {nome_loja}, encontrei", f"Encontrei na {nome_loja}")
-            + " Se quiser, eu comparo dois deles ou simulo o valor."
+            texto.replace(f"Na {nome_loja}, encontrei", f"Separei na {nome_loja}")
+            + " Qual te interessou? Posso comparar, simular ou te encaminhar para um consultor."
         )
     if resultado["correspondencia"] == "vazia":
-        return resultado["texto"] + " Se quiser, afrouxamos um filtro ou eu te encaminho para um consultor."
+        return resultado["texto"] + " Se quiser, afrouxamos um filtro ou eu te encaminho para um consultor negociar outra faixa."
     return resultado["texto"]
 
 
@@ -729,8 +747,53 @@ def _com_consultor(resultado, mensagem):
     return resultado
 
 
+def _usuario_cumprimentou(mensagem):
+    texto = _frase_limpa(mensagem)
+    return texto.startswith((
+        "oi", "ola", "oie", "hey", "eai", "hello", "hi", "fala",
+        "bom dia", "boa tarde", "boa noite", "tudo bem", "tudo bom",
+    ))
+
+
+def _texto_ja_cumprimenta(texto):
+    inicio = (texto or "").lstrip().casefold()
+    return inicio.startswith((
+        "oi", "olá", "ola", "oie", "hey", "bom dia", "boa tarde", "boa noite",
+        "tudo bem", "e aí", "eai",
+    ))
+
+
+def _com_saudacao(mensagem, resultado):
+    if resultado.get("intencao") == "saudacao":
+        return resultado
+    if not _usuario_cumprimentou(mensagem):
+        return resultado
+    texto = resultado.get("texto") or ""
+    if _texto_ja_cumprimenta(texto):
+        return resultado
+    resultado["texto"] = (
+        "Oi! Tudo bem? 😊 Sou a Luna, consultora da Lume. " + texto.lstrip()
+    )
+    return resultado
+
+
+def _parece_reinicio(mensagem):
+    texto = _frase_limpa(mensagem)
+    if not texto:
+        return False
+    comeca_oi = texto.startswith((
+        "oi ", "ola ", "oie ", "hey ", "oi luna", "ola luna", "oie luna",
+    ))
+    if comeca_oi and parece_automotivo(mensagem) and len(texto.split()) >= 6:
+        return True
+    return any(sinal in texto for sinal in (
+        "estou procurando", "estou a procura", "me recomenda", "quais opcoes",
+        "quero comecar", "outra busca", "esquecer", "recomeçar", "recomecar",
+    ))
+
+
 def orquestrar(mensagem, veiculos, prefs, organizacao, configuracao, intencao=None, limite=3):
-    estado = dict(prefs or {})
+    estado = {} if _parece_reinicio(mensagem) else dict(prefs or {})
     intencao_atual = identificar_intencao(mensagem, intencao, estado.get("_intencao"))
     nome_loja = configuracao["trade_name"] if configuracao else organizacao.get("name", "a loja")
     if not (mensagem or "").strip():
@@ -759,4 +822,4 @@ def orquestrar(mensagem, veiculos, prefs, organizacao, configuracao, intencao=No
         resultado = responder_fora(estado)
     else:
         resultado = buscar(mensagem, veiculos, estado, organizacao["id"], nome_loja, limite)
-    return _lembrar_sugestao(_com_consultor(resultado, mensagem))
+    return _lembrar_sugestao(_com_saudacao(mensagem, _com_consultor(resultado, mensagem)))

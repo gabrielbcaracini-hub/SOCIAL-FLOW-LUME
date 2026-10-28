@@ -64,16 +64,30 @@
     document.getElementById("quem-nome").textContent = usuario.nome;
     document.getElementById("quem-papel").textContent = usuario.papel_rotulo;
     document.getElementById("quem-iniciais").textContent = iniciais(usuario.nome);
-    const config = document.getElementById("abre-config");
-    const restaurar = document.getElementById("restaurar");
     const admin = usuario.papel === "admin";
-    config.hidden = !admin;
-    restaurar.hidden = !admin;
+    document.body.classList.toggle("crm-admin", admin);
+    document.body.classList.toggle("crm-consultor", !admin);
+    document.getElementById("abre-config").hidden = !admin;
+    document.getElementById("abre-indicadores").hidden = !admin;
+    document.getElementById("restaurar").hidden = !admin;
     const formVeiculo = document.getElementById("form-veiculo");
     const irCadastro = document.getElementById("ir-cadastrar-veiculo");
     if (formVeiculo) formVeiculo.hidden = !admin;
     if (irCadastro) irCadastro.hidden = !admin;
-    mostrar("indicadores");
+    const textoVeiculos = document.getElementById("texto-veiculos");
+    if (textoVeiculos && !admin) {
+      textoVeiculos.textContent = "Estoque da loja: disponíveis, reservados e vendidos. Sem cadastro de carro novo.";
+    }
+    const textoLeads = document.getElementById("texto-leads");
+    if (textoLeads && !admin) {
+      textoLeads.textContent = "Leads que escolheram você ou que a administração encaminhou.";
+    }
+    const textoAgenda = document.getElementById("texto-agenda");
+    if (textoAgenda && !admin) {
+      textoAgenda.textContent = "Visitas dos seus clientes. Marque, confirme ou reagende.";
+    }
+    document.title = admin ? "CRM administração · SocialFlow Auto" : "CRM consultor · SocialFlow Auto";
+    mostrar(admin ? "indicadores" : "leads");
   }
 
   function textoVariacao(item) {
@@ -503,7 +517,9 @@
     const texto = document.getElementById("texto-leads");
     if (texto) {
       if (filtroLeads.status) texto.textContent = "Mostrando " + lista.length + " lead(s) " + (rotulos[filtroLeads.status] || filtroLeads.status) + ". Ao mudar o status, o indicador do dashboard acompanha.";
-      else texto.textContent = "O contato traz nome, telefone, e-mail, mensagem, carro e o consultor escolhido. Vendas vê os direcionados a si. A administração vê todos.";
+      else texto.textContent = papel === "admin"
+        ? "Todos os leads da loja. Encaminhe para um consultor quando precisar."
+        : "Leads que escolheram você ou que a administração encaminhou.";
     }
     if (!lista.length) {
       const tr = document.createElement("tr");
@@ -574,9 +590,51 @@
     });
   }
 
+  async function preencherFormVisita() {
+    const selectLead = document.getElementById("visita-lead");
+    const selectVeiculo = document.getElementById("visita-veiculo");
+    if (!selectLead || !selectVeiculo) return;
+    const [leads, veiculos] = await Promise.all([
+      SocialFlow.api("/api/admin/leads"),
+      SocialFlow.api("/api/admin/veiculos")
+    ]);
+    const leadAtual = selectLead.value;
+    const veiculoAtual = selectVeiculo.value;
+    selectLead.replaceChildren();
+    const vazio = document.createElement("option");
+    vazio.value = "";
+    vazio.textContent = "Novo contato";
+    selectLead.appendChild(vazio);
+    (leads.leads || []).forEach(function (lead) {
+      const opcao = document.createElement("option");
+      opcao.value = lead.id;
+      opcao.textContent = lead.nome + (lead.veiculo ? " · " + lead.veiculo : "");
+      opcao.dataset.nome = lead.nome || "";
+      opcao.dataset.telefone = lead.telefone || "";
+      opcao.dataset.email = lead.email || "";
+      opcao.dataset.veiculo = lead.veiculo_id || "";
+      selectLead.appendChild(opcao);
+    });
+    selectLead.value = leadAtual;
+    selectVeiculo.replaceChildren();
+    const escolha = document.createElement("option");
+    escolha.value = "";
+    escolha.textContent = "Escolha";
+    selectVeiculo.appendChild(escolha);
+    (veiculos.veiculos || []).forEach(function (veiculo) {
+      if (veiculo.status !== "disponivel" && veiculo.status !== "reservado") return;
+      const opcao = document.createElement("option");
+      opcao.value = veiculo.id;
+      opcao.textContent = veiculo.codigo + " · " + veiculo.marca + " " + veiculo.modelo;
+      selectVeiculo.appendChild(opcao);
+    });
+    selectVeiculo.value = veiculoAtual;
+  }
+
   async function carregarAgenda() {
     const lista = document.getElementById("lista-agenda");
     lista.replaceChildren();
+    await preencherFormVisita();
     const dados = await SocialFlow.api("/api/admin/agendamentos");
     if (!dados.agendamentos.length) {
       lista.textContent = "Nenhum agendamento.";
@@ -735,6 +793,40 @@
     document.getElementById("novo-veiculo").addEventListener("click", function () {
       document.getElementById("form-veiculo").reset();
       document.getElementById("form-veiculo").elements.id.value = "";
+    });
+    const visitaLead = document.getElementById("visita-lead");
+    if (visitaLead) {
+      visitaLead.addEventListener("change", function () {
+        const opcao = visitaLead.selectedOptions[0];
+        if (!opcao || !opcao.value) return;
+        const form = document.getElementById("form-visita");
+        form.elements.nome.value = opcao.dataset.nome || "";
+        form.elements.telefone.value = opcao.dataset.telefone || "";
+        form.elements.email.value = opcao.dataset.email || "";
+        if (opcao.dataset.veiculo) form.elements.veiculo_id.value = opcao.dataset.veiculo;
+      });
+    }
+    document.getElementById("form-visita").addEventListener("submit", async function (evento) {
+      evento.preventDefault();
+      const dados = new FormData(evento.target);
+      try {
+        const resposta = await SocialFlow.api("/api/admin/agendamentos", {
+          json: {
+            lead_id: dados.get("lead_id") || "",
+            nome: dados.get("nome"),
+            telefone: dados.get("telefone"),
+            email: dados.get("email"),
+            veiculo_id: dados.get("veiculo_id"),
+            tipo: dados.get("tipo"),
+            inicio: dados.get("inicio")
+          }
+        });
+        evento.target.reset();
+        SocialFlow.avisar(resposta.mensagem || "Visita registrada.");
+        carregarAgenda();
+      } catch (erro) {
+        SocialFlow.avisar(SocialFlow.erro(erro), "erro");
+      }
     });
     document.getElementById("form-config").addEventListener("submit", async function (evento) {
       evento.preventDefault();

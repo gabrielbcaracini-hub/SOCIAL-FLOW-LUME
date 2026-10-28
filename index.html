@@ -6,7 +6,7 @@
   <title>Lume Veículos · SocialFlow Auto</title>
   <meta name="description" content="Vitrine, consultoria de escolha e agendamento de visita da Lume Veículos, loja fictícia no SocialFlow Auto.">
   <link rel="icon" href="/assets/marca.jpg" type="image/jpeg">
-  <link rel="stylesheet" href="/css/socialflow.css">
+  <link rel="stylesheet" href="/css/socialflow.css?v=aviso-centro">
 </head>
 <body data-pagina="vitrine">
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
@@ -24,9 +24,15 @@
       <svg class="busca-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <input id="busca-topo" type="search" placeholder="Buscar por veículo, marca ou modelo..." autocomplete="off">
     </form>
-    <a class="conta" href="/painel" aria-label="Entrar no painel da loja">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </a>
+    <div class="conta-caixa">
+      <button type="button" class="conta" id="abre-conta" aria-expanded="false" aria-controls="menu-conta" aria-label="Conta e CRM">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="conta-menu" id="menu-conta" hidden>
+        <a href="/painel">Entrar no CRM</a>
+        <p>Administração ou consultor, conforme o e-mail e a senha.</p>
+      </div>
+    </div>
   </header>
   <section class="hero">
     <div class="hero-texto">
@@ -69,6 +75,34 @@
           </div>
           <p id="contador-vitrine" class="contador" aria-live="polite">Encontrados 0 veículos</p>
         </div>
+        <section class="carrossel-vitrine" id="carrossel-vitrine" aria-roledescription="carrossel" aria-label="Destaques da Lume Veículos">
+          <div class="carrossel-janela" tabindex="0">
+            <article class="carrossel-slide ativo" data-carrossel-slide>
+              <img src="/assets/carrossel/lume-suv.jpg" width="1920" height="1080" alt="SUV prata no showroom da Lume Veículos.">
+              <div class="carrossel-legenda">
+                <p class="carrossel-kicker">Seminovos selecionados</p>
+                <h3>Qualidade e procedência para você dirigir tranquilo.</h3>
+                <a class="botao carrossel-cta" href="#consulta">Conheça nosso estoque</a>
+              </div>
+            </article>
+            <article class="carrossel-slide" data-carrossel-slide>
+              <img src="/assets/carrossel/lume-sedan.jpg" width="1920" height="1080" alt="Sedan preto no showroom da Lume Veículos.">
+              <div class="carrossel-legenda">
+                <p class="carrossel-kicker">Veículos revisados</p>
+                <h3>Garantia e segurança em cada detalhe.</h3>
+                <a class="botao carrossel-cta" href="#consulta">Ver veículos disponíveis</a>
+              </div>
+            </article>
+            <article class="carrossel-slide" data-carrossel-slide>
+              <img src="/assets/carrossel/lume-picape.jpg" width="1920" height="1080" alt="Picape branca no showroom da Lume Veículos.">
+              <div class="carrossel-legenda">
+                <p class="carrossel-kicker">As melhores condições</p>
+                <h3>O carro ideal para cada momento da sua vida.</h3>
+                <button type="button" class="botao carrossel-cta" data-abre-contato>Fale com um consultor</button>
+              </div>
+            </article>
+          </div>
+        </section>
         <form id="filtros" class="filtros" aria-label="Filtros do catálogo">
           <div class="grade-campos">
             <label class="campo" for="q">Busca<input id="q" name="q" type="search" placeholder="Marca, modelo ou código"></label>
@@ -205,6 +239,9 @@
       <label class="campo" for="contato-email">E-mail
         <input id="contato-email" name="email" type="email" required autocomplete="email" maxlength="120">
       </label>
+      <label class="campo" for="contato-telefone">Telefone
+        <input id="contato-telefone" name="telefone" type="tel" required autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000">
+      </label>
       <label class="campo" for="contato-mensagem">Mensagem
         <textarea id="contato-mensagem" name="mensagem" required minlength="10" maxlength="800"></textarea>
       </label>
@@ -294,7 +331,7 @@
     </div>
   </aside>
   <script src="/js/util.js"></script>
-  <script src="/js/vitrine.js"></script>
+  <script src="/js/vitrine.js?v=carrossel-cta"></script>
   <script src="/js/hero-scroll.js"></script>
   <script src="/js/assistente.js"></script>
   <script src="/js/contato.js"></script>

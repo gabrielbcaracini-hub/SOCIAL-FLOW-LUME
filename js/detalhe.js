@@ -92,6 +92,7 @@
     try {
       const ctx = await SocialFlow.preparar();
       SocialFlow.preencherLoja(ctx.loja);
+      SocialFlow.montarPerfilCrm(ctx.usuario);
     } catch (erro) {
       SocialFlow.avisar(SocialFlow.erro(erro), "erro");
     }

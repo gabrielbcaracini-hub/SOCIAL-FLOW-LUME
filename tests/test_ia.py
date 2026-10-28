@@ -39,6 +39,34 @@ class TestIaGemini(unittest.TestCase):
         self.assertIn("🚗", texto)
         self.assertEqual(ia.embelezar_luna("Já respondi 😊", "busca"), "Já respondi 😊")
 
+    def test_redigir_luna_local_cumprimenta_e_convida(self):
+        texto = ia.redigir_luna_local(
+            "Na Lume Veículos, encontrei 2 veículo(s).",
+            {
+                "mensagem": "Oi Luna, quero um automático econômico",
+                "veiculos": [
+                    {"nome": "Citroën C4 Cactus Feel"},
+                    {"nome": "Fiat Cronos Precision"},
+                ],
+            },
+        )
+        self.assertIn("Oi", texto)
+        self.assertIn("Citroën C4 Cactus Feel", texto)
+        self.assertIn("consultor", texto.casefold())
+        self.assertNotIn("Cada motivo", texto)
+
+    def test_garantir_saudacao_antes_da_resposta(self):
+        texto = ia.garantir_saudacao(
+            "Oi Luna! Estou procurando um automático",
+            "Separei 3 opções no estoque da Lume.",
+        )
+        self.assertTrue(texto.lower().startswith("oi"))
+        self.assertIn("Separei 3 opções", texto)
+        self.assertEqual(
+            ia.garantir_saudacao("Oi!", "Oi! Tudo bem? Já te atendo."),
+            "Oi! Tudo bem? Já te atendo.",
+        )
+
     def test_url_generate_gemini(self):
         url = ia._url_generate("gemini-3.8-flash", ia.GEMINI_BASE)
         self.assertTrue(url.startswith("https://generativelanguage.googleapis.com/"))

@@ -68,6 +68,23 @@ ESTOQUE = [
     ("EST-1022", "Toyota", "Corolla Cross", "XRX", 2023, 2024, 15000, "cvt", "hibrido", "suv", 179900, "disponivel", "Prata"),
     ("EST-1023", "Chevrolet", "Spin", "LTZ", 2022, 2023, 46000, "automatico", "flex", "minivan", 89900, "disponivel", "Prata"),
     ("EST-1024", "Fiat", "Argo", "Drive", 2023, 2024, 18000, "manual", "flex", "hatch", 68900, "disponivel", "Branco"),
+    ("EST-1025", "Fiat", "Fastback", "Audace", 2023, 2024, 14000, "cvt", "flex", "suv", 119900, "disponivel", "Cinza"),
+    ("EST-1026", "Chevrolet", "Montana", "Premier", 2023, 2024, 16000, "automatico", "flex", "pickup", 124900, "disponivel", "Prata"),
+    ("EST-1027", "Nissan", "Kicks", "Exclusive", 2022, 2023, 28000, "cvt", "flex", "suv", 98900, "disponivel", "Branco"),
+    ("EST-1028", "Honda", "City Hatch", "Touring", 2022, 2023, 21000, "cvt", "flex", "hatch", 96900, "disponivel", "Cinza"),
+    ("EST-1029", "Renault", "Sandero", "Intense", 2020, 2021, 48000, "manual", "flex", "hatch", 59900, "disponivel", "Branco"),
+    ("EST-1030", "Jeep", "Commander", "Limited", 2023, 2024, 18000, "automatico", "flex", "suv", 189900, "disponivel", "Preto"),
+    ("EST-1031", "Chevrolet", "S10", "LTZ", 2021, 2022, 62000, "automatico", "diesel", "pickup", 189900, "disponivel", "Cinza"),
+    ("EST-1032", "Peugeot", "2008", "GT", 2022, 2023, 25000, "automatico", "flex", "suv", 109900, "disponivel", "Laranja"),
+    ("EST-1033", "Ford", "Ranger", "XLT", 2020, 2021, 68000, "automatico", "diesel", "pickup", 169900, "disponivel", "Branco"),
+    ("EST-1034", "Renault", "Duster", "Iconic", 2022, 2023, 31000, "automatico", "flex", "suv", 89900, "disponivel", "Cinza"),
+    ("EST-1035", "Volkswagen", "Taos", "Highline", 2022, 2023, 27000, "automatico", "flex", "suv", 134900, "disponivel", "Prata"),
+    ("EST-1036", "Fiat", "Cronos", "Precision", 2023, 2024, 19000, "automatico", "flex", "sedan", 82900, "disponivel", "Vermelho"),
+    ("EST-1037", "Honda", "City", "EXL", 2023, 2024, 17000, "cvt", "flex", "sedan", 104900, "disponivel", "Prata"),
+    ("EST-1038", "Volkswagen", "Saveiro", "Extreme", 2023, 2024, 22000, "manual", "flex", "pickup", 84900, "disponivel", "Branco"),
+    ("EST-1039", "Hyundai", "Tucson", "Limited", 2022, 2023, 35000, "automatico", "flex", "suv", 154900, "disponivel", "Azul"),
+    ("EST-1040", "BYD", "Yuan Plus", "Plus", 2023, 2024, 9000, "automatico", "eletrico", "suv", 169900, "disponivel", "Cinza"),
+    ("EST-1041", "Citroën", "C4 Cactus", "Feel", 2020, 2021, 44000, "automatico", "flex", "suv", 79900, "disponivel", "Branco"),
 ]
 
 # Fotos reais em assets/veiculos/. Créditos e a diferença de ano/versão: data/creditos-fotos.md
@@ -182,6 +199,80 @@ FOTOS = {
         ("argo.jpg", "Fiat Argo, frente"),
         ("argo-traseira.jpg", "Fiat Argo, traseira"),
         ("argo-interior.jpg", "Fiat Argo, interior"),
+    ],
+    "EST-1025": [
+        ("fastback.jpg", "Fiat Fastback, frente"),
+        ("fastback-traseira.jpg", "Fiat Fastback, traseira"),
+        ("fastback-interior.jpg", "Fiat Fastback, interior"),
+    ],
+    "EST-1026": [
+        ("montana.jpg", "Chevrolet Montana, frente"),
+        ("montana-traseira.jpg", "Chevrolet Montana, traseira"),
+        ("montana-interior.jpg", "Chevrolet Montana, interior"),
+    ],
+    "EST-1027": [
+        ("kicks.jpg", "Nissan Kicks, frente"),
+        ("kicks-traseira.jpg", "Nissan Kicks, traseira"),
+        ("kicks-interior.jpg", "Nissan Kicks, interior"),
+    ],
+    "EST-1028": [
+        ("cityhatch.jpg", "Honda City Hatch, frente"),
+        ("cityhatch-traseira.jpg", "Honda City Hatch, traseira"),
+        ("cityhatch-interior.jpg", "Honda City Hatch, interior"),
+    ],
+    "EST-1029": [
+        ("sandero.jpg", "Renault Sandero, frente"),
+        ("sandero-traseira.jpg", "Renault Sandero, traseira"),
+    ],
+    "EST-1030": [
+        ("commander.jpg", "Jeep Commander, frente"),
+        ("commander-traseira.jpg", "Jeep Commander, traseira"),
+    ],
+    "EST-1031": [
+        ("s10.jpg", "Chevrolet S10, frente"),
+        ("s10-traseira.jpg", "Chevrolet S10, traseira"),
+    ],
+    "EST-1032": [
+        ("peugeot2008.jpg", "Peugeot 2008, frente"),
+        ("peugeot2008-traseira.jpg", "Peugeot 2008, traseira"),
+    ],
+    "EST-1033": [
+        ("ranger.jpg", "Ford Ranger, frente"),
+        ("ranger-traseira.jpg", "Ford Ranger, traseira"),
+    ],
+    "EST-1034": [
+        ("duster.jpg", "Renault Duster, frente"),
+        ("duster-traseira.jpg", "Renault Duster, traseira"),
+        ("duster-interior.jpg", "Renault Duster, interior"),
+    ],
+    "EST-1035": [
+        ("taos.jpg", "Volkswagen Taos, frente"),
+        ("taos-traseira.jpg", "Volkswagen Taos, traseira"),
+    ],
+    "EST-1036": [
+        ("cronos.jpg", "Fiat Cronos, frente"),
+        ("cronos-traseira.jpg", "Fiat Cronos, traseira"),
+    ],
+    "EST-1037": [
+        ("city.jpg", "Honda City, frente"),
+        ("city-traseira.jpg", "Honda City, traseira"),
+    ],
+    "EST-1038": [
+        ("saveiro.jpg", "Volkswagen Saveiro, frente"),
+        ("saveiro-traseira.jpg", "Volkswagen Saveiro, traseira"),
+    ],
+    "EST-1039": [
+        ("tucson.jpg", "Hyundai Tucson, frente"),
+        ("tucson-traseira.jpg", "Hyundai Tucson, traseira"),
+        ("tucson-interior.jpg", "Hyundai Tucson, interior"),
+    ],
+    "EST-1040": [
+        ("atto3.jpg", "BYD Yuan Plus, frente"),
+        ("atto3-traseira.jpg", "BYD Yuan Plus, traseira"),
+    ],
+    "EST-1041": [
+        ("cactus.jpg", "Citroën C4 Cactus, frente"),
+        ("cactus-traseira.jpg", "Citroën C4 Cactus, traseira"),
     ],
 }
 

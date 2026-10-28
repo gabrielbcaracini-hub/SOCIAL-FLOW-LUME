@@ -347,6 +347,32 @@
     return artigo;
   };
 
+  SocialFlow.montarPerfilCrm = function (usuario) {
+    const botao = document.getElementById("abre-conta");
+    const menu = document.getElementById("menu-conta");
+    if (!botao || !menu) return;
+    const link = menu.querySelector("a");
+    const nota = menu.querySelector("p");
+    if (usuario && link) {
+      link.textContent = usuario.papel === "admin" ? "Abrir CRM da administração" : "Abrir CRM do consultor";
+      link.href = "/painel";
+      if (nota) nota.textContent = usuario.nome + " · " + (usuario.papel_rotulo || "");
+    }
+    botao.addEventListener("click", function (evento) {
+      evento.stopPropagation();
+      const aberto = menu.hidden;
+      menu.hidden = !aberto;
+      botao.setAttribute("aria-expanded", aberto ? "true" : "false");
+    });
+    document.addEventListener("click", function () {
+      menu.hidden = true;
+      botao.setAttribute("aria-expanded", "false");
+    });
+    menu.addEventListener("click", function (evento) {
+      evento.stopPropagation();
+    });
+  };
+
   SocialFlow.preencherLoja = function (loja) {
     document.querySelectorAll("[data-loja]").forEach(function (el) {
       const campo = el.getAttribute("data-loja");

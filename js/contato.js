@@ -80,6 +80,7 @@
           json: {
             nome: dados.get("nome"),
             email: dados.get("email"),
+            telefone: dados.get("telefone"),
             mensagem: dados.get("mensagem"),
             veiculo_id: dados.get("veiculo_id") || "",
             consultor_id: dados.get("consultor_id"),

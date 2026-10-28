@@ -193,11 +193,22 @@
     marcarAberto(true);
   }
 
+  function reiniciarConversa() {
+    sessao = "";
+    sugestoes = [];
+    sessionStorage.removeItem("socialflow-auto.luna");
+    const log = logEl();
+    if (log) log.replaceChildren();
+    const raizLuna = caixa();
+    if (raizLuna) raizLuna.classList.remove("luna-em-conversa");
+  }
+
   function fecharPainel() {
     const raizLuna = caixa();
     raizLuna.classList.remove("aberta");
     painel().hidden = true;
     marcarAberto(false);
+    reiniciarConversa();
   }
 
   function recolher() {
@@ -206,6 +217,7 @@
     raizLuna.classList.remove("aberta");
     painel().hidden = true;
     marcarAberto(false);
+    reiniciarConversa();
   }
 
   async function consultar(mensagem, opcoes) {

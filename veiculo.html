@@ -24,9 +24,15 @@
       <svg class="busca-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <input id="busca-topo" name="q" type="search" placeholder="Buscar por veículo, marca ou modelo..." autocomplete="off">
     </form>
-    <a class="conta" href="/painel" aria-label="Entrar no painel da loja">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </a>
+    <div class="conta-caixa">
+      <button type="button" class="conta" id="abre-conta" aria-expanded="false" aria-controls="menu-conta" aria-label="Conta e CRM">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.3-2.8 3.5-4.2 6.5-4.2s5.2 1.4 6.5 4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="conta-menu" id="menu-conta" hidden>
+        <a href="/painel">Entrar no CRM</a>
+        <p>Administração ou consultor, conforme o e-mail e a senha.</p>
+      </div>
+    </div>
   </header>
   <main id="conteudo" class="miolo">
     <p class="nota-demo" data-loja="aviso_demonstracao">Loja fictícia. Veículos, contatos e agendamentos não são reais.</p>
@@ -141,6 +147,9 @@
       </label>
       <label class="campo" for="contato-email">E-mail
         <input id="contato-email" name="email" type="email" required autocomplete="email" maxlength="120">
+      </label>
+      <label class="campo" for="contato-telefone">Telefone
+        <input id="contato-telefone" name="telefone" type="tel" required autocomplete="tel" maxlength="20" placeholder="(11) 90000-0000">
       </label>
       <label class="campo" for="contato-mensagem">Mensagem
         <textarea id="contato-mensagem" name="mensagem" required minlength="10" maxlength="800"></textarea>

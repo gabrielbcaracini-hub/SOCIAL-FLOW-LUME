@@ -70,6 +70,13 @@ def telefone_opcional(valor, campo="telefone"):
     return texto
 
 
+def telefone_obrigatorio(valor, campo="telefone"):
+    texto = telefone_opcional(valor, campo)
+    if not texto:
+        raise ErroHttp(400, "Informe o telefone.", {campo: "Campo obrigatório."})
+    return texto
+
+
 def exigir_contato(telefone, email):
     if not telefone and not email:
         raise ErroHttp(
@@ -354,6 +361,23 @@ def payload_agenda_publico(bruto):
     return dados
 
 
+def payload_agenda_equipe(bruto):
+    if not isinstance(bruto, dict):
+        raise ErroHttp(400, "Pedido de visita inválido.")
+    telefone = telefone_opcional(bruto.get("telefone"))
+    email = email_opcional(bruto.get("email"))
+    exigir_contato(telefone, email)
+    veiculo_id = texto_limitado(bruto.get("veiculo_id"), 8, 80, "veículo")
+    return {
+        "nome": nome_pessoa(bruto.get("nome")),
+        "telefone": telefone,
+        "email": email,
+        "veiculo_id": veiculo_id,
+        "tipo": enumerado(bruto.get("tipo"), TIPOS_VISITA, "tipo de visita"),
+        "inicio": texto_limitado(bruto.get("inicio"), 10, 40, "horário"),
+    }
+
+
 def payload_configuracao(bruto):
     if not isinstance(bruto, dict):
         raise ErroHttp(400, "Configuração inválida.")
@@ -422,6 +446,7 @@ def payload_contato(bruto):
     return {
         "nome": nome_pessoa(bruto.get("nome")),
         "email": email_obrigatorio(bruto.get("email")),
+        "telefone": telefone_obrigatorio(bruto.get("telefone")),
         "mensagem": texto_limitado(bruto.get("mensagem"), 10, 800, "mensagem"),
         "consultor_id": consultor_id,
         "veiculo_id": veiculo_id,

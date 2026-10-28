@@ -152,9 +152,11 @@ class TestApi(unittest.TestCase):
         self.assertIn("EST-1011", codigos)
         self.assertIn("EST-1013", codigos)
         self.assertIn("EST-1024", codigos)
+        self.assertIn("EST-1025", codigos)
+        self.assertIn("EST-1041", codigos)
         self.assertNotIn("EST-1020", codigos)
         disponiveis = [item for item in payload["veiculos"] if item["status"] == "disponivel"]
-        self.assertGreaterEqual(len(disponiveis), 16)
+        self.assertGreaterEqual(len(disponiveis), 33)
         tcross = next(item for item in payload["veiculos"] if item["codigo"] == "EST-1011")
         self.assertTrue(tcross["imagens"][0]["url"].endswith("/tcross.jpg"))
         self.assertGreaterEqual(len(tcross["imagens"]), 2)
@@ -171,8 +173,8 @@ class TestApi(unittest.TestCase):
         self.assertEqual(payload["modo"], "deterministico")
         self.assertIn("sem modelo generativo", payload["modo_rotulo"])
         codigos = {item["codigo"] for item in payload["sugestoes"]}
-        self.assertIn("EST-1001", codigos)
-        self.assertIn("EST-1002", codigos)
+        self.assertTrue(codigos)
+        self.assertTrue(codigos.issubset({"EST-1001", "EST-1002", "EST-1019", "EST-1036", "EST-1037"}))
         self.assertNotIn("EST-1007", codigos)
         self.assertNotIn("EST-9999", codigos)
         self.assertTrue(all(item["motivos"] for item in payload["sugestoes"]))
@@ -319,7 +321,7 @@ class TestApi(unittest.TestCase):
         self._entrar(ADMIN_EMAIL, "Teste-Admin-2026")
         status, criado = self.cliente.pedir("POST", "/api/admin/veiculos", {
             "marca": "Fiat",
-            "modelo": "Cronos",
+            "modelo": "CronosLab",
             "versao": "Drive",
             "ano_fabricacao": 2023,
             "ano_modelo": 2024,
@@ -338,7 +340,7 @@ class TestApi(unittest.TestCase):
         vid = criado["veiculo"]["id"]
         self.assertEqual(criado["veiculo"]["imagens"][0]["tipo"], "upload")
         publico = Cliente("127.0.0.1", self.porta)
-        status, lista = publico.pedir("GET", "/api/publico/veiculos?q=Cronos")
+        status, lista = publico.pedir("GET", "/api/publico/veiculos?q=CronosLab")
         self.assertEqual(status, 200)
         self.assertTrue(any(item["codigo"] == "EST-TESTE" for item in lista["veiculos"]))
         status, midia = publico.pedir("GET", "/midia/" + criado["veiculo"]["imagens"][0]["id"])
@@ -346,7 +348,7 @@ class TestApi(unittest.TestCase):
         self.assertTrue(midia.startswith(b"\x89PNG"))
         status, _ = self.cliente.pedir("PUT", "/api/admin/veiculos/" + vid, {
             "marca": "Fiat",
-            "modelo": "Cronos",
+            "modelo": "CronosLab",
             "versao": "Drive",
             "ano_fabricacao": 2023,
             "ano_modelo": 2024,
@@ -366,7 +368,7 @@ class TestApi(unittest.TestCase):
             "mensagem": "sedan automático até 100 mil",
         })
         self.assertNotIn("EST-TESTE", {item["codigo"] for item in consulta["sugestoes"]})
-        status, lista = publico.pedir("GET", "/api/publico/veiculos?q=Cronos")
+        status, lista = publico.pedir("GET", "/api/publico/veiculos?q=CronosLab")
         self.assertEqual(lista["veiculos"], [])
         status, _ = publico.pedir("GET", "/midia/" + criado["veiculo"]["imagens"][0]["id"])
         self.assertEqual(status, 404)
@@ -415,6 +417,7 @@ class TestApi(unittest.TestCase):
         status, enviado = self.cliente.pedir("POST", "/api/publico/contatos", {
             "nome": "Helena Prado",
             "email": "helena.contato@exemplo.demo",
+            "telefone": "(11) 90000-0102",
             "mensagem": "Quero saber do Corolla nesta semana.",
             "consentimento": True,
             "consultor_id": por_nome["Ricardo Nunes"],
@@ -425,6 +428,7 @@ class TestApi(unittest.TestCase):
         status, outro = self.cliente.pedir("POST", "/api/publico/contatos", {
             "nome": "Igor Lima",
             "email": "igor.contato@provedor.demo",
+            "telefone": "(11) 90000-0103",
             "mensagem": "Prefiro falar com a Camila sobre o Civic.",
             "consentimento": True,
             "consultor_id": por_nome["Camila Duarte"],
@@ -441,6 +445,7 @@ class TestApi(unittest.TestCase):
         self.assertNotIn("igor.contato@provedor.demo", emails)
         helena = next(item for item in leads["leads"] if item["email"] == "helena.contato@exemplo.demo")
         self.assertEqual(helena["origem"], "contato")
+        self.assertEqual(helena["telefone"], "(11) 90000-0102")
         self.assertEqual(helena["resumo"], "Quero saber do Corolla nesta semana.")
         self.assertEqual(helena["responsavel_nome"], "Ricardo Nunes")
         self.assertIn("Corolla", helena["veiculo"])
@@ -530,6 +535,56 @@ class TestApi(unittest.TestCase):
         emails_admin = {item["email"] for item in todos["leads"]}
         self.assertIn("helena.ficha@exemplo.demo", emails_admin)
         self.assertIn("igor.ficha@exemplo.demo", emails_admin)
+
+    def test_consultor_marca_visita_so_da_sua_carteira(self):
+        ricardo_id = self._consultor("Ricardo Nunes")
+        self.cliente.pedir("POST", "/api/publico/contatos", {
+            "nome": "Helena Prado",
+            "email": "helena.visita@exemplo.demo",
+            "telefone": "(11) 90000-0104",
+            "mensagem": "Quero test-drive do Polo.",
+            "consentimento": True,
+            "consultor_id": ricardo_id,
+            "veiculo_id": self._id_codigo("EST-1003"),
+        })
+        ricardo = Cliente("127.0.0.1", self.porta)
+        ricardo.pedir("GET", "/api/contexto")
+        status, sessao = ricardo.pedir("POST", "/api/entrar", {"email": SELLER_EMAIL, "senha": "Teste-Venda-2026"})
+        self.assertEqual(status, 200)
+        self.assertEqual(sessao["usuario"]["papel_rotulo"], "Consultor")
+        status, leads = ricardo.pedir("GET", "/api/admin/leads")
+        helena = next(item for item in leads["leads"] if item["email"] == "helena.visita@exemplo.demo")
+        inicio = proximo_dia_util(3, 15).strftime("%Y-%m-%dT%H:%M")
+        status, visita = ricardo.pedir("POST", "/api/admin/agendamentos", {
+            "lead_id": helena["id"],
+            "nome": helena["nome"],
+            "telefone": "(11) 98888-0100",
+            "email": helena["email"],
+            "veiculo_id": self._id_codigo("EST-1003"),
+            "tipo": "test_drive",
+            "inicio": inicio,
+        })
+        self.assertEqual(status, 201, visita)
+        status, agenda = ricardo.pedir("GET", "/api/admin/agendamentos")
+        self.assertEqual(status, 200)
+        self.assertTrue(any(item["email"] == "helena.visita@exemplo.demo" for item in agenda["agendamentos"]))
+        status, recusa = ricardo.pedir("POST", "/api/admin/veiculos", {
+            "marca": "Fiat",
+            "modelo": "Mobi",
+            "versao": "Like",
+            "ano_fabricacao": 2022,
+            "ano_modelo": 2023,
+            "km": 8000,
+            "cambio": "manual",
+            "combustivel": "flex",
+            "tipo": "hatch",
+            "preco_reais": "55000,00",
+            "status": "disponivel",
+            "cor": "Branco",
+            "descricao": "Consultor não cadastra estoque.",
+            "codigo": "EST-CRM",
+        })
+        self.assertEqual(status, 403, recusa)
 
     def _consultor(self, nome):
         status, equipe = self.cliente.pedir("GET", "/api/publico/consultores")

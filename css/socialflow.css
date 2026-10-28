@@ -194,6 +194,46 @@ code {
   border: 1px solid var(--linha);
   border-radius: 999px;
   text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.conta-caixa {
+  position: relative;
+}
+
+.conta-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.45rem);
+  z-index: 8;
+  min-width: 15rem;
+  padding: 0.7rem 0.85rem;
+  background: #141414;
+  border: 1px solid var(--linha);
+  border-radius: 0.7rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.conta-menu a {
+  display: block;
+  color: var(--texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.conta-menu p {
+  margin: 0.4rem 0 0;
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+}
+
+body.crm-consultor #abre-indicadores,
+body.crm-consultor #abre-config,
+body.crm-consultor #restaurar,
+body.crm-consultor #form-veiculo,
+body.crm-consultor #ir-cadastrar-veiculo {
+  display: none;
 }
 
 .hero {
@@ -596,6 +636,97 @@ body.modo-consulta .consultor { order: -1; }
 
 .filtros, .formulario { display: grid; gap: 0.75rem; }
 .filtros { margin-top: 0.85rem; padding: 0; background: transparent; }
+
+#filtros,
+#nota-filtros {
+  display: none !important;
+}
+
+body.modo-consulta #filtros {
+  display: grid !important;
+}
+
+body.modo-consulta .carrossel-vitrine { display: none; }
+
+.carrossel-vitrine {
+  position: relative;
+  margin: 0.7rem 0 1rem;
+}
+
+.carrossel-janela {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #070707;
+  outline: none;
+  aspect-ratio: 1024 / 341;
+}
+
+.carrossel-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: block;
+  color: inherit;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.carrossel-slide.ativo {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+}
+
+.carrossel-slide img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 72% 55%;
+}
+
+.carrossel-legenda {
+  position: absolute;
+  left: 4.2%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  max-width: min(22rem, 46%);
+  pointer-events: none;
+}
+
+.carrossel-kicker {
+  margin: 0 0 0.35rem;
+  color: #d8c4a0;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.carrossel-legenda h3 {
+  margin: 0 0 0.7rem;
+  color: #fff;
+  font-size: clamp(1.05rem, 2.1vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.carrossel-cta {
+  pointer-events: auto;
+  min-height: 2.05rem;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 40rem) {
+  .carrossel-legenda { max-width: 72%; }
+  .carrossel-slide img { object-position: 80% 50%; }
+}
 .grade-campos { grid-template-columns: 1fr; }
 
 .campo, .mes {
@@ -729,10 +860,13 @@ caption { margin-bottom: 0.55rem; text-align: left; font-weight: 650; }
 
 .aviso {
   position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 6;
-  max-width: min(24rem, calc(100% - 2rem));
+  left: 50%;
+  right: auto;
+  top: 4.8rem;
+  bottom: auto;
+  z-index: 80;
+  max-width: min(26rem, calc(100% - 2rem));
+  transform: translateX(-50%);
 }
 .aviso:empty { display: none; }
 .aviso.ok, .aviso.erro { padding: 0.75rem 0.9rem; border-radius: 0.4rem; }
@@ -851,6 +985,7 @@ dialog h2 { font-size: 1.1rem; }
   .grade-vitrine { grid-template-columns: 1fr 1fr 1fr; }
   .grade-indicadores { grid-template-columns: repeat(4, 1fr); }
   .filtros .grade-campos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .carrossel-janela { border-radius: 1.15rem; }
   main.miolo {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 19.5rem;

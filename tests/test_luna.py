@@ -73,6 +73,13 @@ class TestLuna(unittest.TestCase):
         self.assertEqual(identificar_intencao("quero saber sobre os carros automáticos"), "busca")
         self.assertEqual(identificar_intencao("queria saber mais sobre o gol"), "busca")
         self.assertEqual(identificar_intencao("o que voce faz"), "ajuda")
+        self.assertEqual(
+            identificar_intencao(
+                "Oi Luna! Estou procurando um carro automático, econômico e confortável",
+                ultima="comparacao",
+            ),
+            "busca",
+        )
 
     def test_busca_por_preco_e_contexto(self):
         primeira = self.falar("Quero um SUV até R$ 80 mil")
@@ -158,6 +165,17 @@ class TestLuna(unittest.TestCase):
         automaticos = {v["id"] for v in self.veiculos if v["transmission"] in {"automatico", "cvt"}}
         self.assertTrue(ids & automaticos)
         self.assertNotIn("hb20", ids)
+
+    def test_nova_saudacao_reinicia_conversa_de_comparacao(self):
+        prefs = {"_intencao": "comparacao", "modelo": "civic"}
+        resposta = self.falar(
+            "Oi Luna! Estou procurando um carro automático, econômico e confortável para usar no dia a dia. Quais opções você me recomenda?",
+            prefs,
+        )
+        self.assertEqual(resposta["intencao"], "busca")
+        self.assertTrue(resposta["texto"].lower().startswith(("oi", "olá", "ola")))
+        self.assertNotEqual(resposta["texto"][:20].lower(), "diga pelo menos dois")
+        self.assertNotIn("civic", (resposta.get("preferencias") or {}).get("modelo") or "")
 
     def test_saber_mais_sobre_gol_busca_estoque(self):
         self.veiculos.append(carro(id="gol", brand="Volkswagen", model="Gol", price_cents=4590000))
